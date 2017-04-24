@@ -4,31 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Any Fab is OK. (Third party library, your custom view and so on) -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+    <com.joaquimley.faboptions.FabOptions
+        android:id="@+id/fab_options"
         android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin"/>
-
-    <!-- You must wrap transform view in Circular reveal container -->
-    <io.codetail.widget.RevealFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <!-- Transform view -->
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/blue"
-            android:visibility="invisible">
-            <!-- Put view you like -->
-        </android.support.v7.widget.Toolbar>
-
-    </io.codetail.widget.RevealFrameLayout>
+        android:layout_gravity="bottom|end" />
 
 </RelativeLayout>
