@@ -1,0 +1,27 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fragment_login_margin">12dp</dimen>
+    <dimen name="fragment_login_logo_margin">50dp</dimen>
+    <dimen name="fragment_login_input_margin_bottom">8dp</dimen>
+    <dimen name="progressbar_size">64dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="login_marginTop">56dp</dimen>
+    <dimen name="login_inputMarginTop">8dp</dimen>
+    <dimen name="login_inputMarginSides">6dp</dimen>
+    <dimen name="sectionTitleTextSize">20sp</dimen>
+    <dimen name="labelTextSize">18sp</dimen>
+    <dimen name="cardInnerMargin">5dp</dimen>
+    <dimen name="cardOutterMargin">8dp</dimen>
+    <dimen name="cardHeight">50dp</dimen>
+    <dimen name="bottomSheetTitle">26sp</dimen>
+    <dimen name="bottomSheetHeight">300dp</dimen>
+    <dimen name="bottom_sheet_padding_bottom">8dp</dimen>
+    <dimen name="cardTextSize">20sp</dimen>
+    <dimen name="itemWarningIcon">5dp</dimen>
+    <dimen name="sheet_create_task_height">300dp</dimen>
+    <dimen name="card_height">80dp</dimen>
+    <dimen name="hr_margin">10dp</dimen>
+    <dimen name="dialog_margin">12dp</dimen>
+</resources>
