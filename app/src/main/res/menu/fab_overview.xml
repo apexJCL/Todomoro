@@ -7,17 +7,11 @@
 
     <item
         android:id="@+id/faboptions_textsms"
-        android:icon="@drawable/ic_alarm_on_black_24dp"
+        android:icon="@drawable/ic_done_all_black_24dp"
         android:title="Message" />
 
     <item
         android:id="@+id/faboptions_download"
         android:icon="@drawable/ic_add_24dp"
         android:title="Download" />
-
-
-    <item
-        android:id="@+id/faboptions_share"
-        android:icon="@drawable/faboptions_ic_close"
-        android:title="Share" />
 </menu>

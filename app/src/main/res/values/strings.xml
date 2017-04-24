@@ -37,4 +37,5 @@
     <string name="error_signup">There\'s been an error, try again.</string>
     <string name="label_color">Color</string>
     <string name="action_delete">Delete</string>
+    <string name="action_add">Add</string>
 </resources>

@@ -7,8 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.rubensousa.floatingtoolbar.FloatingToolbar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,12 +27,14 @@ import me.apexjcl.todomoro.realm.models.Task;
  * Handles showing all (not finished) tasks
  * Created by apex on 22/04/17.
  */
-public class TasksFragment extends Fragment implements FloatingActionButton.OnClickListener {
+public class TasksFragment extends Fragment implements FloatingToolbar.ItemClickListener {
 
     @BindView(R.id.tasksRecyclerView)
     RecyclerView mTaskRecyclerView;
     @BindView(R.id.fab)
     FloatingActionButton mFab;
+    @BindView(R.id.floatingToolbar)
+    FloatingToolbar mToolbar;
 
     private Realm realm;
 
@@ -44,7 +49,8 @@ public class TasksFragment extends Fragment implements FloatingActionButton.OnCl
 
     private void onCreateViewInit() {
         realm = Realm.getDefaultInstance();
-        mFab.setOnClickListener(this);
+        mToolbar.attachFab(mFab);
+        mToolbar.setClickListener(this);
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderedRealmCollection<Task> tasks = TaskHandler.getUnfinishedTasks(realm);
         TasksRecyclerAdapter adapter = new TasksRecyclerAdapter(getContext(), tasks, true, getFragmentManager(), false);
@@ -59,16 +65,28 @@ public class TasksFragment extends Fragment implements FloatingActionButton.OnCl
         });
     }
 
-    @Override
-    public void onClick(View view) {
-        CreateTaskDialogFragment dialogFragment = new CreateTaskDialogFragment();
-        dialogFragment.show(getFragmentManager(), "create_task");
-    }
 
     @Override
     public void onDestroy() {
         realm.close();
         realm = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                CreateTaskDialogFragment dialogFragment = new CreateTaskDialogFragment();
+                dialogFragment.show(getFragmentManager(), "create_task");
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onItemLongClick(MenuItem item) {
+
     }
 }
