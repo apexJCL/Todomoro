@@ -17,6 +17,10 @@ public class PomodoroStatus extends RealmObject {
      */
     private String status;
     /**
+     * Indicates the pomodoro previous status
+     */
+    private String previousStatus;
+    /**
      * To mark WHEN did the event ocurred.
      * <p>
      * ex: 27 Apr at 20:12
@@ -33,7 +37,7 @@ public class PomodoroStatus extends RealmObject {
     /**
      * Indicates the current pomodoro cycle (1 cycle = 4 pomodoros + 4 breaks)
      */
-    private int cycle = 1;
+    private int cycle = 0;
     /**
      * Used to mark the actual pomodoro.
      * ex: After 1 pomodoro = 1, after 2 = 2, after 3 = 3, after 4 = 0 and cycle goes up 1
@@ -82,5 +86,13 @@ public class PomodoroStatus extends RealmObject {
 
     public void setPomodoro_count(int pomodoro_count) {
         this.pomodoro_count = pomodoro_count;
+    }
+
+    public String getPreviousStatus() {
+        return previousStatus;
+    }
+
+    public void setPreviousStatus(String previousStatus) {
+        this.previousStatus = previousStatus;
     }
 }

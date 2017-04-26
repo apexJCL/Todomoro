@@ -1,5 +1,6 @@
 package me.apexjcl.todomoro.logic;
 
+import me.apexjcl.todomoro.realm.handlers.PomodoroListHandler;
 import me.apexjcl.todomoro.realm.models.PomodoroStatus;
 import me.apexjcl.todomoro.realm.models.Task;
 
@@ -30,23 +31,29 @@ public class Pomodoro {
     private Status previousStatus = Status.INIT;
     private Status actualStatus = Status.INIT;
     /**
-     * Indicates how many pomodoros has been completed
+     * Indicates how many pomodoros has been completed (1 pomodoro = 25 minutes)
      */
     private int completedPomodoros = 0;
     /**
      * Indicates how many cycles has been completed (1 cycle = 4 Pomodoros + 4 breaks)
      */
     private int completedCycles = 0;
+    /**
+     * Represents the task that the pomodoro belongs to
+     */
+    private Task mTask;
 
     /**
      * Initializes a new pomodoro
      */
     public Pomodoro(Task task) {
+        this.mTask = task;
         if (task.getPomodoroStatusList().size() == 0)
             return;
         PomodoroStatus status = task.getPomodoroStatusList().last();
         remaining = status.getRemaining();
-        actualStatus = Status.RESUMING;
+        previousStatus = stringToStatus(status.getPreviousStatus());
+        actualStatus = stringToStatus(status.getStatus());
     }
 
     /**
@@ -54,20 +61,34 @@ public class Pomodoro {
      */
     public void start() {
         actualStatus = Status.CYCLE;
+        addEntry(false);
     }
 
     public void pause() {
         previousStatus = actualStatus;
         actualStatus = Status.PAUSED;
+        addEntry(false);
     }
 
     public void resume() {
         actualStatus = previousStatus;
         previousStatus = Status.PAUSED;
+        addEntry(false);
     }
 
     public void finish() {
+        previousStatus = actualStatus;
         actualStatus = Status.DONE;
+        addEntry(true);
+    }
+
+    /**
+     * Used to indicate that a cycle (either a break or a normal work cycle) has come
+     * to an end
+     */
+    public void finishCycle() {
+        previousStatus = actualStatus;
+        update(0);
     }
 
     /**
@@ -76,7 +97,7 @@ public class Pomodoro {
      */
     public void update(long timeRemaining) {
         this.remaining = timeRemaining;
-        if (remaining >= 0) // nothing to do here, so go on :)
+        if (remaining > 0) // nothing to do here, so go on :)
             return;
 
         switch (actualStatus) {
@@ -94,17 +115,20 @@ public class Pomodoro {
         if (completedPomodoros < 4) { // Put remaining for regular break cycle
             remaining = BREAK_CYCLE;
             actualStatus = Status.BREAK;
+            addEntry(false);
             return;
         }
         completedCycles++;
         completedPomodoros = 0;
         remaining = LONG_BREAK_CYCLE;
         actualStatus = Status.LONG_BREAK;
+        addEntry(true);
     }
 
     private void fromBreakToCycle() {
         actualStatus = Status.CYCLE;
         remaining = POMODORO_CYCLE;
+        addEntry(true);
     }
 
     private Status stringToStatus(String status) {
@@ -131,7 +155,7 @@ public class Pomodoro {
     }
 
     public long getElapsed() {
-        switch (actualStatus) {
+        switch (previousStatus) {
             case CYCLE:
                 return POMODORO_CYCLE - remaining;
             case BREAK:
@@ -162,11 +186,23 @@ public class Pomodoro {
      * @return If the pomodoro can start
      */
     public boolean canStart() {
-        return actualStatus != Status.DONE && remaining > 0 && actualStatus == Status.PAUSED;
+        return actualStatus != Status.DONE && remaining > 0;
     }
 
     public Status getActualStatus() {
         return actualStatus;
+    }
+
+    private void addEntry(boolean finished) {
+        PomodoroListHandler.addEntry(
+                previousStatus.name(),
+                actualStatus.name(),
+                finished,
+                remaining,
+                mTask.getId(),
+                completedCycles,
+                completedPomodoros
+        );
     }
 
     public enum Status {

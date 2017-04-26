@@ -21,7 +21,7 @@ android {
             buildConfigField String, "OBJECT_SERVER_PORT", "\"9080\""
             buildConfigField String, "OBJECT_SERVER_PROTOCOL", "\"http://\""
             buildConfigField Boolean, "debug", "true"
-            buildConfigField Long, "SCHEMA_VERSION", "4"
+            buildConfigField Long, "SCHEMA_VERSION", "6"
         }
         release {
             minifyEnabled false
