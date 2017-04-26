@@ -1,5 +1,6 @@
 package me.apexjcl.todomoro.fragments.dialogs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -18,6 +19,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
 import me.apexjcl.todomoro.R;
+import me.apexjcl.todomoro.activities.PomodoroActivity;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
 
@@ -73,9 +75,9 @@ public class TaskDetailDialogFragment extends BottomSheetDialogFragment implemen
 
     @Override
     public void onClick(View view) {
-//        Intent i = new Intent(getContext(), TaskActivity.class);
-//        i.putExtra(TaskActivity.TASK_EXTRA, task.id); // changing later for numbers and a PK
-//        startActivity(i);
+        Intent i = new Intent(getContext(), PomodoroActivity.class);
+        i.putExtra(PomodoroActivity.TASK_ID, ((Task) mTask).getId());
+        startActivity(i);
     }
 
     @Override

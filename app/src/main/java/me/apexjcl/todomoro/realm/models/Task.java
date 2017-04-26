@@ -1,12 +1,12 @@
 package me.apexjcl.todomoro.realm.models;
 
+import java.util.Date;
+import java.util.UUID;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
-import me.apexjcl.todomoro.R;
-
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Defines a task and it's properties
@@ -60,9 +60,14 @@ public class Task extends RealmObject {
      */
     public Date finishedAt = null;
     /**
-     * Defines the task color
+     * Defines the task color, by default it's white
      */
-    public int color = R.color.red;
+    public int color = -1;
+    /**
+     * Each task can hold a list of pomodoro actions, such as
+     * started, paused, finished
+     */
+    public RealmList<PomodoroStatus> pomodoroStatusList = new RealmList<>();
 
     public int getColor() {
         return color;
@@ -102,6 +107,10 @@ public class Task extends RealmObject {
 
     public Date getFinishedAt() {
         return finishedAt;
+    }
+
+    public RealmList<PomodoroStatus> getPomodoroStatusList() {
+        return pomodoroStatusList;
     }
 }
 

@@ -53,7 +53,7 @@ public class TaskHandler {
 
     public static void delete(final String mTaskId) {
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
+        realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmObject t = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
@@ -73,5 +73,16 @@ public class TaskHandler {
                 realm.copyToRealmOrUpdate(task);
             }
         });
+    }
+
+    public static RealmObject getTask(String mTaskId) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmObject task = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
+        realm.close();
+        return task;
+    }
+
+    public static void addPomodoroEntry(String id) {
+
     }
 }

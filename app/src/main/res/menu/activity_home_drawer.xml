@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+
+        <item
+            android:id="@+id/action_show_done"
+            android:title="@string/action_show_done" />
+
+        <item
+            android:id="@+id/action_show_stats"
+            android:title="@string/action_show_stats" />
+
+    </group>
+
+    <item android:title="@string/current_user">
+
+        <menu>
+
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="@string/action_settings" />
+
+            <item
+                android:id="@+id/action_logout"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="@string/action_logout" />
+
+        </menu>
+
+    </item>
+
+
+</menu>

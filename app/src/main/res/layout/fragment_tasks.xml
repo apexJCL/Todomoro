@@ -15,19 +15,14 @@
         tools:context="me.apexjcl.todomoro.fragments.TasksFragments"
         tools:listitem="@layout/item_task" />
 
-    <com.github.rubensousa.floatingtoolbar.FloatingToolbar
-        android:id="@+id/floatingToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:floatingMenu="@menu/fab_menu_tasks" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        app:rippleColor="@color/white"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_more_horiz_black_24dp" />
+        android:src="@drawable/ic_add_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

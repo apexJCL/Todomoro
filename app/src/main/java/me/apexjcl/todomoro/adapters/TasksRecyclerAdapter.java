@@ -9,21 +9,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
 import io.realm.RealmRecyclerViewAdapter;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.fragments.dialogs.TaskDetailDialogFragment;
@@ -89,9 +85,13 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         private String mTaskId;
         private PopupMenu mPopup;
 
+        private final int DELETE_ITEM = 4;
+        private final int MARK_DONE_ITEM = 2;
+
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new ViewClickListener());
             itemView.setOnLongClickListener(this);
             mPopup = new PopupMenu(context, mMenu);
             mPopup.getMenuInflater().inflate(R.menu.menu_task_item, mPopup.getMenu());
@@ -99,7 +99,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
             mPopup.setOnMenuItemClickListener(this);
             //
             if (done)
-                mPopup.getMenu().getItem(1).setVisible(false);
+                mPopup.getMenu().getItem(MARK_DONE_ITEM).setVisible(false);
         }
 
         private void updateView(Task task) {
@@ -110,7 +110,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
 
         @Override
         public void onClick(View v) {
-            mPopup.getMenu().getItem(3).setVisible(false);
+            mPopup.getMenu().getItem(DELETE_ITEM).setVisible(false);
             mPopup.show();
         }
 
@@ -118,11 +118,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_details:
-                    TaskDetailDialogFragment dialogFragment = new TaskDetailDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(TaskDetailDialogFragment.BUNDLE_TASK_ID, mTaskId);
-                    dialogFragment.setArguments(bundle);
-                    dialogFragment.show(fragmentManager, "task");
+                    showDetails();
                     return true;
                 case R.id.action_done:
                     TaskHandler.markFinished(mTaskId);
@@ -137,11 +133,27 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
             }
         }
 
+        void showDetails() {
+            TaskDetailDialogFragment dialogFragment = new TaskDetailDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(TaskDetailDialogFragment.BUNDLE_TASK_ID, mTaskId);
+            dialogFragment.setArguments(bundle);
+            dialogFragment.show(fragmentManager, "task");
+        }
+
         @Override
         public boolean onLongClick(View v) {
-            mPopup.getMenu().getItem(3).setVisible(true);
+            mPopup.getMenu().getItem(DELETE_ITEM).setVisible(true);
             mPopup.show();
             return true;
+        }
+
+        private class ViewClickListener implements View.OnClickListener {
+
+            @Override
+            public void onClick(View v) {
+                showDetails();
+            }
         }
     }
 }

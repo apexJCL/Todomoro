@@ -15,7 +15,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.HomeActivity" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
+        <activity android:name=".activities.PomodoroActivity"
+            android:theme="@style/AppTheme.Pomodoro.NoActionBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            />
     </application>
 
 </manifest>

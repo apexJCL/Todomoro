@@ -38,4 +38,11 @@
     <string name="label_color">Color</string>
     <string name="action_delete">Delete</string>
     <string name="action_add">Add</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_show_done">Show done tasks</string>
+    <string name="action_show_stats">Show stats</string>
+    <string name="current_user">Account</string>
+    <string name="action_edit">Edit</string>
+    <string name="timer_placeholder">25:00</string>
 </resources>
