@@ -21,7 +21,7 @@ android {
             buildConfigField String, "OBJECT_SERVER_PORT", "\"9080\""
             buildConfigField String, "OBJECT_SERVER_PROTOCOL", "\"http://\""
             buildConfigField Boolean, "debug", "true"
-            buildConfigField Long, "SCHEMA_VERSION", "6"
+            buildConfigField Long, "SCHEMA_VERSION", "7"
         }
         release {
             minifyEnabled false
@@ -48,7 +48,8 @@ dependencies {
     compile 'com.github.tiagohm.MarkdownView:library:0.16.0'
     compile 'io.realm:android-adapters:1.4.0'
     compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.github.krtkush:LinearTimer:v2.1.0'
+    compile 'com.github.flepsik:progress-ring-view:1.1.2'
+    compile 'com.github.iwgang:countdownview:2.1.3'
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.pes.materialcolorpicker:library:1.1.+'

@@ -33,6 +33,7 @@ import me.apexjcl.todomoro.realm.UserManager;
 import me.apexjcl.todomoro.realm.handlers.PomodoroListHandler;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.PomodoroStatus;
+import me.apexjcl.todomoro.realm.models.Task;
 
 /**
  * Principal application activity

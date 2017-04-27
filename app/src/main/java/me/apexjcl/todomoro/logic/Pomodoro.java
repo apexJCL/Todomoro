@@ -1,5 +1,6 @@
 package me.apexjcl.todomoro.logic;
 
+import io.realm.Sort;
 import me.apexjcl.todomoro.realm.handlers.PomodoroListHandler;
 import me.apexjcl.todomoro.realm.models.PomodoroStatus;
 import me.apexjcl.todomoro.realm.models.Task;
@@ -23,190 +24,123 @@ import me.apexjcl.todomoro.realm.models.Task;
 
 public class Pomodoro {
 
-    public static final long POMODORO_CYCLE = 1_500_000;
-    public static final long BREAK_CYCLE = 300_000;
-    public static final long LONG_BREAK_CYCLE = 1_200_000;
+    //    public static final long POMODORO_CYCLE = 1_500_000;
+    public static final long POMODORO_CYCLE = 10_000;
+    public static final long BREAK_CYCLE = 5000;
+    public static final long LONG_BREAK_CYCLE = 8000;
 
-    private long remaining = POMODORO_CYCLE;
-    private Status previousStatus = Status.INIT;
-    private Status actualStatus = Status.INIT;
     /**
-     * Indicates how many pomodoros has been completed (1 pomodoro = 25 minutes)
+     * How long will pomodoro run :3
      */
-    private int completedPomodoros = 0;
-    /**
-     * Indicates how many cycles has been completed (1 cycle = 4 Pomodoros + 4 breaks)
-     */
-    private int completedCycles = 0;
-    /**
-     * Represents the task that the pomodoro belongs to
-     */
+    private long remainingTime = POMODORO_CYCLE;
+
+    private int elapsedPomodoros = 0;
+    private int elapsedCycles = 0;
+
     private Task mTask;
+    private STATUS actualStatus = STATUS.CYCLE;
 
-    /**
-     * Initializes a new pomodoro
-     */
+    private boolean finished = false;
+
     public Pomodoro(Task task) {
         this.mTask = task;
         if (task.getPomodoroStatusList().size() == 0)
             return;
-        PomodoroStatus status = task.getPomodoroStatusList().last();
-        remaining = status.getRemaining();
-        previousStatus = stringToStatus(status.getPreviousStatus());
+        // We have a history, so load previous values
+        PomodoroStatus status = task.getPomodoroStatusList().sort("time", Sort.ASCENDING).last();
+        finished = status.isFinished();
+        remainingTime = status.getRemaining();
         actualStatus = stringToStatus(status.getStatus());
+        elapsedCycles = status.getCycle();
+        elapsedPomodoros = status.getPomodoro_count();
     }
 
-    /**
-     * Used to begin the pomodoro
-     */
     public void start() {
-        actualStatus = Status.CYCLE;
         addEntry(false);
     }
 
-    public void pause() {
-        previousStatus = actualStatus;
-        actualStatus = Status.PAUSED;
+    public void stop(long remainTime) {
+        this.remainingTime = remainTime;
         addEntry(false);
     }
 
-    public void resume() {
-        actualStatus = previousStatus;
-        previousStatus = Status.PAUSED;
-        addEntry(false);
-    }
-
-    public void finish() {
-        previousStatus = actualStatus;
-        actualStatus = Status.DONE;
-        addEntry(true);
+    private void addEntry(boolean finished) {
+        if (this.finished)
+            return;
+        PomodoroListHandler.addEntry(
+                actualStatus.name(),
+                finished,
+                getRemainingTime(),
+                mTask.getId(),
+                elapsedCycles,
+                elapsedPomodoros
+        );
+        this.finished = finished;
     }
 
     /**
-     * Used to indicate that a cycle (either a break or a normal work cycle) has come
-     * to an end
+     * Used to mark the end of a cycle, it automatically
+     * sets the new remaining time according to events and whatsoever
      */
     public void finishCycle() {
-        previousStatus = actualStatus;
-        update(0);
-    }
-
-    /**
-     * This method should be called on the timing thread, it keeps up
-     * to date Pomodoro data and checks for cycle logic
-     */
-    public void update(long timeRemaining) {
-        this.remaining = timeRemaining;
-        if (remaining > 0) // nothing to do here, so go on :)
-            return;
-
+        elapsedPomodoros++;
         switch (actualStatus) {
             case CYCLE:
-                fromCycleToBreak();
+                if (elapsedPomodoros < 4) { // switch to normal break
+                    actualStatus = STATUS.BREAK;
+                    remainingTime = BREAK_CYCLE;
+                    break;
+                }
+                elapsedPomodoros = 0;
+                elapsedCycles++;
+                actualStatus = STATUS.LONG_BREAK;
+                remainingTime = LONG_BREAK_CYCLE;
                 break;
             case BREAK:
-                fromBreakToCycle();
-                break;
-        }
-    }
-
-    private void fromCycleToBreak() {
-        completedPomodoros++;
-        if (completedPomodoros < 4) { // Put remaining for regular break cycle
-            remaining = BREAK_CYCLE;
-            actualStatus = Status.BREAK;
-            addEntry(false);
-            return;
-        }
-        completedCycles++;
-        completedPomodoros = 0;
-        remaining = LONG_BREAK_CYCLE;
-        actualStatus = Status.LONG_BREAK;
-        addEntry(true);
-    }
-
-    private void fromBreakToCycle() {
-        actualStatus = Status.CYCLE;
-        remaining = POMODORO_CYCLE;
-        addEntry(true);
-    }
-
-    private Status stringToStatus(String status) {
-        switch (status) {
-            case "INIT":
-                return Status.INIT;
-            case "CYCLE":
-                return Status.CYCLE;
-            case "BREAK":
-                return Status.BREAK;
-            case "LONG_BREAK":
-                return Status.LONG_BREAK;
-            case "PAUSED":
-                return Status.PAUSED;
-            case "DONE":
-                return Status.DONE;
-            default:
-                return Status.UNKNOWN;
-        }
-    }
-
-    public long getRemainingTime() {
-        return remaining;
-    }
-
-    public long getElapsed() {
-        switch (previousStatus) {
-            case CYCLE:
-                return POMODORO_CYCLE - remaining;
-            case BREAK:
-                return BREAK_CYCLE - remaining;
             case LONG_BREAK:
-                return LONG_BREAK_CYCLE - remaining;
+                actualStatus = STATUS.CYCLE;
+                remainingTime = POMODORO_CYCLE;
+                break;
+        }
+        addEntry(false);
+    }
+
+    public void setRemainingTime(long remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public STATUS stringToStatus(String status) {
+        switch (status) {
+            case "CYCLE":
+                return STATUS.CYCLE;
+            case "BREAK":
+                return STATUS.BREAK;
+            case "LONG_BREAK":
+                return STATUS.LONG_BREAK;
+            default:
+                return STATUS.CYCLE;
+        }
+    }
+
+    public long getCycleTime() {
+        switch (actualStatus) {
+            case CYCLE:
+                return POMODORO_CYCLE;
+            case BREAK:
+                return BREAK_CYCLE;
+            case LONG_BREAK:
+                return LONG_BREAK_CYCLE;
             default:
                 return 0;
         }
     }
 
-    /**
-     * Tells whether or not the Pomodoro can start.
-     * <p>
-     * A pomodoro can only start if:
-     * <ul>
-     * <li>
-     * It's not marked as done yet
-     * </li>
-     * <li>
-     * If the remaining time it's greater than 0
-     * </li>
-     * <li>
-     * If it's paused
-     * </li>
-     * </ul>
-     *
-     * @return If the pomodoro can start
-     */
-    public boolean canStart() {
-        return actualStatus != Status.DONE && remaining > 0;
+    public long getRemainingTime() {
+        return remainingTime;
     }
 
-    public Status getActualStatus() {
-        return actualStatus;
-    }
-
-    private void addEntry(boolean finished) {
-        PomodoroListHandler.addEntry(
-                previousStatus.name(),
-                actualStatus.name(),
-                finished,
-                remaining,
-                mTask.getId(),
-                completedCycles,
-                completedPomodoros
-        );
-    }
-
-    public enum Status {
-        INIT, CYCLE, BREAK, LONG_BREAK, PAUSED, DONE, RESUMING, UNKNOWN
+    public enum STATUS {
+        CYCLE, BREAK, LONG_BREAK
     }
 
 }

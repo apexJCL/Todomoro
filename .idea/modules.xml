@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Todomoro.iml" filepath="$PROJECT_DIR$/Todomoro.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/finalcountdown/finalcountdown.iml" filepath="$PROJECT_DIR$/finalcountdown/finalcountdown.iml" />
     </modules>
   </component>
 </project>
