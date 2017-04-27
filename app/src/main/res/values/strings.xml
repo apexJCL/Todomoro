@@ -47,4 +47,5 @@
     <string name="timer_placeholder">25:00</string>
     <string name="minute">m</string>
     <string name="seconds">s</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

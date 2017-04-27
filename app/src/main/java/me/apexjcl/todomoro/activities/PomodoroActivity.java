@@ -10,28 +10,28 @@ import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.iwgang.countdownview.CountdownView;
-import cn.iwgang.countdownview.DynamicConfig;
-import flepsik.github.com.progress_ring.ProgressRingView;
+import io.github.krtkush.lineartimer.LinearTimer;
+import io.github.krtkush.lineartimer.LinearTimerView;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.logic.Pomodoro;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
 
 
-public class PomodoroActivity extends AppCompatActivity implements CountdownView.OnCountdownIntervalListener, CountdownView.OnCountdownEndListener {
+public class PomodoroActivity extends AppCompatActivity implements LinearTimer.TimerListener {
 
-    @BindView(R.id.progressRingView)
-    ProgressRingView mRingView;
     @BindView(R.id.control_button)
     ImageView mControlButton;
-    @BindView(R.id.countdownView)
-    CountdownView mCountdownView;
+    @BindView(R.id.linear_timer)
+    LinearTimerView mTimerView;
 
     public static final String TASK_ID = "task_id";
+
+    private LinearTimer mTimer;
+    private Pomodoro mPomodoro;
     private String mTaskId;
     private Task mTask;
-    private Pomodoro mPomodoro;
+
     private boolean autoCycle = true;
     private boolean started = false;
 
@@ -51,26 +51,38 @@ public class PomodoroActivity extends AppCompatActivity implements CountdownView
     private void init() {
         mTask = (Task) TaskHandler.getTask(mTaskId);
         mPomodoro = new Pomodoro(mTask);
-        mRingView.setProgress(calculaFill(mPomodoro.getCycleTime(), mPomodoro.getRemainingTime()));
-        mRingView.setAnimated(true);
-        mCountdownView.setOnCountdownEndListener(this);
-        mCountdownView.setOnCountdownIntervalListener(500, this);
+        initTimer();
+    }
+
+    private void initTimer() {
+        mTimer = new LinearTimer.Builder()
+                .linearTimerView(mTimerView)
+                .duration(30_000)
+                .timerListener(this)
+                .getCountUpdate(LinearTimer.COUNT_DOWN_TIMER, 500)
+                .build();
     }
 
 
     @OnClick(R.id.control_button)
     void controlTimer() {
-        if (started) {
-            started = false;
-            mCountdownView.stop();
-            mPomodoro.stop(mCountdownView.getRemainTime());
-            setPlayButton();
-            return;
+        switch (mTimer.getState()) {
+            case INITIALIZED:
+                setPauseButton();
+                mTimer.startTimer();
+                break;
+            case ACTIVE:
+                setPlayButton();
+                mTimer.pauseTimer();
+                break;
+            case PAUSED:
+                setPauseButton();
+                mTimer.resumeTimer();
+                break;
+            case FINISHED:
+                break;
         }
-        started = true;
-        mPomodoro.start();
-        setPauseButton();
-        mCountdownView.start(mPomodoro.getRemainingTime());
+        Log.d("timer", mTimer.getState().name());
     }
 
 
@@ -94,28 +106,24 @@ public class PomodoroActivity extends AppCompatActivity implements CountdownView
     protected void onDestroy() {
         mTask = null;
         mPomodoro = null;
+        mTimer.pauseTimer();
+        mTimer = null;
         super.onDestroy();
     }
 
     @Override
-    public void onInterval(CountdownView cv, long remainingTime) {
-        mRingView.setProgress(calculaFill(mPomodoro.getCycleTime(), remainingTime));
-    }
-
-    private float calculaFill(long cycleTime, long remainingTime) {
-        return 1f / (cycleTime / (cycleTime - ((float) remainingTime - 1f)));
+    public void animationComplete() {
+        Log.d("timer", "animation complete");
     }
 
     @Override
-    public void onEnd(CountdownView cv) { // Here we will handle cycle logic chain
-        Log.d("CounterView", "onEnd");
-        mPomodoro.setRemainingTime(0);
-        mPomodoro.finishCycle();
-        if (!autoCycle) {
-            started = false;
-            setPlayButton();
-            return;
-        }
-        mCountdownView.start(mPomodoro.getRemainingTime());
+    public void timerTick(long tickUpdateInMillis) {
+        Log.d("timer", "Tick " + String.valueOf(tickUpdateInMillis));
     }
+
+    @Override
+    public void onTimerReset() {
+        Log.d("timer", "reset");
+    }
+
 }

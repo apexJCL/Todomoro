@@ -11,7 +11,9 @@
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:actionBarStyle">@style/Theme.AppNoActionBar.Light.DarkActionBar.Todomoro</item>
+        <item name="android:actionBarStyle">
+            @style/Theme.AppNoActionBar.Light.DarkActionBar.Todomoro
+        </item>
     </style>
 
     <style name="Theme.Design.Light.BottomSheetDialog.Todomoro" parent="Theme.Design.Light.BottomSheetDialog">
@@ -26,8 +28,12 @@
 
     <style name="Theme.Design.Light.BottomSheetDialog.Todomoro.Pomodoro" parent="android:Theme.DeviceDefault.Dialog.NoActionBar" />
 
-    <style name="AppTheme.Pomodoro.NoActionBar" parent="Theme.AppCompat.NoActionBar" >
+    <style name="AppTheme.Pomodoro.NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

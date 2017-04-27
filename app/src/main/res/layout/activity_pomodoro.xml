@@ -5,11 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <flepsik.github.com.progress_ring.ProgressRingView
-        android:id="@+id/progressRingView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="30dp" />
+    <io.github.krtkush.lineartimer.LinearTimerView
+        android:id="@+id/linear_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:initialColor="@color/blue"
+        app:progressColor="@color/colorAccent"
+        app:radius="@dimen/timer_radius"
+        app:strokeWidth="@dimen/timer_stroke" />
 
     <ImageView
         android:id="@+id/control_button"
@@ -19,19 +23,5 @@
         android:layout_centerInParent="true"
         android:clickable="true"
         android:src="@drawable/ic_play_arrow_24dp" />
-
-    <cn.iwgang.countdownview.CountdownView
-        android:id="@+id/countdownView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/countdown_height"
-        android:layout_alignParentBottom="true"
-        app:isShowMillisecond="true"
-        app:suffixGravity="bottom"
-        app:suffixMinute="@string/minute"
-        app:suffixSecond="@string/seconds"
-        app:suffixTextColor="@color/blue"
-        app:suffixTextSize="@dimen/suffix_text"
-        app:timeTextColor="@color/white"
-        app:timeTextSize="@dimen/chronometer_font" />
 
 </RelativeLayout>

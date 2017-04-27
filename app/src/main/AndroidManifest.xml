@@ -12,17 +12,17 @@
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity android:name=".activities.PomodoroActivity"
-            android:theme="@style/AppTheme.Pomodoro.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.PomodoroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            />
+            android:theme="@style/AppTheme.Pomodoro.NoActionBar" />
     </application>
 
 </manifest>

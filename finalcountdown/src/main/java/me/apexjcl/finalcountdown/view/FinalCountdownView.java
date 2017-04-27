@@ -1,6 +1,7 @@
 package me.apexjcl.finalcountdown.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.View;
 
 /**
@@ -11,5 +12,10 @@ import android.view.View;
 public class FinalCountdownView extends View {
     public FinalCountdownView(Context context) {
         super(context);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 }
