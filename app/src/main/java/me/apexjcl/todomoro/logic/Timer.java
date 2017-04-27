@@ -1,7 +1,6 @@
 package me.apexjcl.todomoro.logic;
 
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 
 /**
@@ -24,9 +23,9 @@ public class Timer {
     private long duration;
     private long remaining;
 
-    public Timer(long duration, long countUpdate, @Nullable final TimerListener listener) {
+    public Timer(long duration, long remaining, long countUpdate, @Nullable final TimerListener listener) {
         this.listener = listener;
-        this.remaining = duration;
+        this.remaining = remaining;
         this.duration = duration;
         this.countUpdate = countUpdate;
         state = STATE.INIT;
@@ -54,6 +53,21 @@ public class Timer {
     }
 
     /**
+     * Sets the timer remaining time
+     *
+     * @param remaining
+     */
+    public void setRemaining(long remaining) {
+        this.remaining = remaining;
+        this.duration = remaining;
+        this.state = STATE.INIT;
+    }
+
+    public float getCompletion() {
+        return 1f / (duration / (duration - ((float) remaining - 1f)));
+    }
+
+    /**
      * Returns the timer actual state
      *
      * @return
@@ -63,7 +77,7 @@ public class Timer {
     }
 
     private CountDownTimer buildTimer() {
-        lastCalled = SystemClock.currentThreadTimeMillis();
+        lastCalled = System.currentTimeMillis();
         return new CountDownTimer(remaining, refreshRate) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -86,38 +100,57 @@ public class Timer {
     }
 
     private boolean isCallable() {
-        long called = SystemClock.currentThreadTimeMillis();
+        long called = System.currentTimeMillis();
         if ((called - lastCalled) < countUpdate)
             return false;
         lastCalled = called;
-        return false;
+        return true;
     }
 
-    enum STATE {
+    public long getRemaining() {
+        return remaining;
+    }
+
+    public enum STATE {
         INIT, PAUSED, RUNNING, FINISHED
     }
 
 
-    public class Builder {
+    public static class Builder {
 
+        private long remaining = -1;
         private long duration;
         private long countUpdate = 1000;
         private TimerListener listener;
 
-        public void setDuration(long duration) {
+        public Builder() {
+
+        }
+
+        public Builder setDuration(long duration) {
             this.duration = duration;
+            return this;
         }
 
-        public void setListener(TimerListener listener) {
+        public Builder setListener(TimerListener listener) {
             this.listener = listener;
+            return this;
         }
 
-        public void setCountUpdate(long countUpdate) {
+        public Builder setCountUpdate(long countUpdate) {
             this.countUpdate = countUpdate;
+            return this;
+        }
+
+        public Builder setRemaining(long remaining) {
+            this.remaining = remaining;
+            return this;
         }
 
         public Timer build() {
-            return new Timer(duration, countUpdate, listener);
+            if (remaining == -1)
+                return new Timer(duration, duration, countUpdate, listener);
+            return new Timer(duration, remaining, countUpdate, listener);
         }
 
     }

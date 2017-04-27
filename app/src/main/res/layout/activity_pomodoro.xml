@@ -5,15 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <io.github.krtkush.lineartimer.LinearTimerView
-        android:id="@+id/linear_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:initialColor="@color/blue"
-        app:progressColor="@color/colorAccent"
-        app:radius="@dimen/timer_radius"
-        app:strokeWidth="@dimen/timer_stroke" />
+    <flepsik.github.com.progress_ring.ProgressRingView
+        android:id="@+id/progressRing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        app:animated="true"
+        app:animation_duration="100"
+        app:background_color="@color/colorPrimary"
+        app:background_progress_color="#e4e7d3"
+        app:corner_edges="true"
+        app:progress_color="@color/colorPrimaryDark"
+        app:progress_fill="true"
+        app:ring_width="10dp" />
 
     <ImageView
         android:id="@+id/control_button"
@@ -23,5 +27,16 @@
         android:layout_centerInParent="true"
         android:clickable="true"
         android:src="@drawable/ic_play_arrow_24dp" />
+
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:text="@string/timePlaceholder"
+        android:textColor="@color/white"
+        android:textSize="@dimen/timer_font" />
 
 </RelativeLayout>

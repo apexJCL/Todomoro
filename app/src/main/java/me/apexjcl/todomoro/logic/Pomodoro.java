@@ -24,10 +24,9 @@ import me.apexjcl.todomoro.realm.models.Task;
 
 public class Pomodoro {
 
-    //    public static final long POMODORO_CYCLE = 1_500_000;
-    public static final long POMODORO_CYCLE = 10_000;
-    public static final long BREAK_CYCLE = 5000;
-    public static final long LONG_BREAK_CYCLE = 8000;
+    public static final long POMODORO_CYCLE = 1_500_000;
+    public static final long BREAK_CYCLE = 300_000;
+    public static final long LONG_BREAK_CYCLE = 1_200_000;
 
     /**
      * How long will pomodoro run :3
@@ -133,6 +132,10 @@ public class Pomodoro {
             default:
                 return 0;
         }
+    }
+
+    public float getCompletion() {
+        return 1f / (getCycleTime() / (getCycleTime() - ((float) remainingTime - 1f)));
     }
 
     public long getRemainingTime() {
