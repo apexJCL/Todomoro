@@ -81,8 +81,4 @@ public class TaskHandler {
         realm.close();
         return task;
     }
-
-    public static void addPomodoroEntry(String id) {
-
-    }
 }

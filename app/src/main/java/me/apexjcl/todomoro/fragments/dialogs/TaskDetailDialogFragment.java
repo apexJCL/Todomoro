@@ -58,7 +58,9 @@ public class TaskDetailDialogFragment extends BottomSheetDialogFragment implemen
         ButterKnife.bind(this, v);
         mfab.setOnClickListener(this);
         updateView();
-        Realm.getDefaultInstance().addChangeListener(this);
+        Realm r = Realm.getDefaultInstance();
+        r.addChangeListener(this);
+        r.close();
         return v;
     }
 

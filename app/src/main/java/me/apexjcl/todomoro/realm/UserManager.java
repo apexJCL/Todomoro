@@ -1,5 +1,7 @@
 package me.apexjcl.todomoro.realm;
 
+import android.util.Log;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.SyncConfiguration;
@@ -25,7 +27,6 @@ public class UserManager {
                 user,
                 TodomoroApplication.ROS_REALM_URL
         ).schemaVersion(TodomoroApplication.SCHEMA_VERSION).build();
-        Realm.removeDefaultConfiguration();
         Realm.setDefaultConfiguration(configuration);
     }
 

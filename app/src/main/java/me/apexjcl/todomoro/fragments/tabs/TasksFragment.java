@@ -45,8 +45,13 @@ public class TasksFragment extends Fragment implements FloatingActionButton.OnCl
         return v;
     }
 
-    private void onCreateViewInit() {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
+    }
+
+    private void onCreateViewInit() {
         mFab.setOnClickListener(this);
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderedRealmCollection<Task> tasks = TaskHandler.getUnfinishedTasks(realm);

@@ -40,7 +40,6 @@ public class Pomodoro {
     private STATUS actualStatus = STATUS.CYCLE;
 
     private boolean finished = false;
-    private long vibrationPattern;
 
     public Pomodoro(Task task) {
         this.mTask = task;
@@ -145,6 +144,7 @@ public class Pomodoro {
 
     public void destroyed() {
         addEntry(finished);
+        mTask = null;
     }
 
     public long[] getVibrationPattern() {
