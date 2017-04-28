@@ -135,11 +135,15 @@ public class Pomodoro {
     }
 
     public float getCompletion() {
-        return 1f / (getCycleTime() / (getCycleTime() - ((float) remainingTime - 1f)));
+        return (1f / (getCycleTime() / (getCycleTime() - ((float) remainingTime - 1f)))) * 100;
     }
 
     public long getRemainingTime() {
         return remainingTime;
+    }
+
+    public void destroyed() {
+        addEntry(finished);
     }
 
     public enum STATUS {

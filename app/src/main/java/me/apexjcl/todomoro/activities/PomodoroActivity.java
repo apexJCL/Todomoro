@@ -7,12 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
+
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import flepsik.github.com.progress_ring.ProgressRingView;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.logic.Pomodoro;
 import me.apexjcl.todomoro.logic.Timer;
@@ -22,10 +23,11 @@ import me.apexjcl.todomoro.realm.models.Task;
 
 public class PomodoroActivity extends AppCompatActivity implements Timer.TimerListener {
 
+
     @BindView(R.id.control_button)
     ImageView mControlButton;
-    @BindView(R.id.progressRing)
-    ProgressRingView mProgressRing;
+    @BindView(R.id.fillProgress)
+    CircularFillableLoaders mLoader;
     @BindView(R.id.timer_text)
     TextView mTimerText;
 
@@ -61,7 +63,9 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
                 .setCountUpdate(250)
                 .build();
         updateTimeLabel(mPomodoro.getRemainingTime());
-        mProgressRing.setProgress(mPomodoro.getCompletion());
+        mLoader.setProgress((int) mPomodoro.getCompletion());
+        mLoader.setAmplitudeRatio(0.001f);
+        // mProgressRing.setProgress(mPomodoro.getCompletion());
     }
 
 
@@ -72,16 +76,19 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
                 mPomodoro.start();
                 setPauseButton();
                 mTimer.start();
+                mLoader.setAmplitudeRatio(0.05f);
                 break;
             case PAUSED:
                 mPomodoro.start();
                 setPauseButton();
                 mTimer.start();
+                mLoader.setAmplitudeRatio(0.05f);
                 break;
             case RUNNING:
                 mTimer.pause();
                 mPomodoro.stop(mTimer.getRemaining());
                 setPlayButton();
+                mLoader.setAmplitudeRatio(0.001f);
                 break;
             case FINISHED:
                 setPlayButton();
@@ -115,22 +122,35 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
 
     @Override
     protected void onDestroy() {
+        // save status
+        mTimer.destroy();
+        mPomodoro.setRemainingTime(mTimer.getRemaining());
+        mPomodoro.destroyed();
         mTask = null;
         mPomodoro = null;
+        mTimer = null;
+        mLoader = null;
         super.onDestroy();
     }
 
     @Override
     public void onTick(long milisUntilFinished) {
-        mProgressRing.setProgress(mPomodoro.getCompletion());
+        mLoader.setProgress(calculatePercentage(mPomodoro.getCycleTime(), milisUntilFinished));
+        // mProgressRing.setProgress(mPomodoro.getCompletion());
         updateTimeLabel(milisUntilFinished);
+    }
+
+    private int calculatePercentage(long cycleTime, long remainingTime) {
+        return (int) ((1f / (cycleTime / (cycleTime - ((float) remainingTime - 1f)))) * 100);
     }
 
     @Override
     public void onFinishCountdown() {
-        mProgressRing.setProgress(1);
+        // mProgressRing.setProgress(1);
         mPomodoro.finishCycle();
         mTimer.setRemaining(mPomodoro.getCycleTime());
         setPlayButton();
+        mLoader.setProgress(100);
+        mLoader.setAmplitudeRatio(0.001f);
     }
 }

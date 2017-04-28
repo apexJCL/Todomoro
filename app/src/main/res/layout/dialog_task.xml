@@ -48,6 +48,6 @@
             app:layout_anchor="@id/main_appbar"
             app:layout_anchorGravity="bottom|right|end"
             app:rippleColor="#FFFF"
-            android:src="@drawable/ic_stopwatch"/>
+            android:src="@drawable/tomato_no_color"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,6 +1,7 @@
 package me.apexjcl.todomoro.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmRecyclerViewAdapter;
 import me.apexjcl.todomoro.R;
+import me.apexjcl.todomoro.activities.PomodoroActivity;
 import me.apexjcl.todomoro.fragments.dialogs.TaskDetailDialogFragment;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
@@ -124,6 +126,9 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
                     TaskHandler.markFinished(mTaskId);
                     return true;
                 case R.id.action_pomodoro:
+                    Intent i = new Intent(context, PomodoroActivity.class);
+                    i.putExtra(PomodoroActivity.TASK_ID, mTaskId);
+                    context.startActivity(i);
                     return true;
                 case R.id.action_delete:
                     TaskHandler.delete(mTaskId);

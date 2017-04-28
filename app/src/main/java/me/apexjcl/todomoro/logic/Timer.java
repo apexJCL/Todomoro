@@ -111,6 +111,13 @@ public class Timer {
         return remaining;
     }
 
+    public void destroy() {
+        if (mTimer == null)
+            return;
+        this.mTimer.cancel();
+        this.listener = null;
+    }
+
     public enum STATE {
         INIT, PAUSED, RUNNING, FINISHED
     }

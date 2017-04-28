@@ -5,19 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <flepsik.github.com.progress_ring.ProgressRingView
-        android:id="@+id/progressRing"
+    <com.mikhaellopez.circularfillableloaders.CircularFillableLoaders
+        android:id="@+id/fillProgress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        app:animated="true"
-        app:animation_duration="100"
-        app:background_color="@color/colorPrimary"
-        app:background_progress_color="#e4e7d3"
-        app:corner_edges="true"
-        app:progress_color="@color/colorPrimaryDark"
-        app:progress_fill="true"
-        app:ring_width="10dp" />
+        android:layout_centerInParent="true"
+        android:src="@drawable/tomato"
+        app:cfl_border="true"
+        app:cfl_border_width="5dp"
+        app:cfl_wave_color="#E57373" />
 
     <ImageView
         android:id="@+id/control_button"
