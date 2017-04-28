@@ -25,7 +25,7 @@ import me.apexjcl.todomoro.realm.models.Task;
 public class Pomodoro {
 
     public static final long POMODORO_CYCLE = 1_500_000;
-    public static final long BREAK_CYCLE = 300c_000;
+    public static final long BREAK_CYCLE = 300_000;
     public static final long LONG_BREAK_CYCLE = 1_200_000;
 
     /**
