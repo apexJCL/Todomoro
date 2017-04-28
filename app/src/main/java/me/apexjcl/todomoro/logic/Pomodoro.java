@@ -25,7 +25,7 @@ import me.apexjcl.todomoro.realm.models.Task;
 public class Pomodoro {
 
     public static final long POMODORO_CYCLE = 1_500_000;
-    public static final long BREAK_CYCLE = 300_000;
+    public static final long BREAK_CYCLE = 300c_000;
     public static final long LONG_BREAK_CYCLE = 1_200_000;
 
     /**
@@ -40,6 +40,7 @@ public class Pomodoro {
     private STATUS actualStatus = STATUS.CYCLE;
 
     private boolean finished = false;
+    private long vibrationPattern;
 
     public Pomodoro(Task task) {
         this.mTask = task;
@@ -144,6 +145,22 @@ public class Pomodoro {
 
     public void destroyed() {
         addEntry(finished);
+    }
+
+    public long[] getVibrationPattern() {
+        switch (actualStatus) {
+            case BREAK:
+                return new long[]{0l, 500l, 200l, 1000l};
+            case LONG_BREAK:
+                return new long[]{0l, 500l, 200l, 1000l, 200l, 1000l};
+            default:
+            case CYCLE:
+                return new long[]{0l, 500l, 200l, 500l};
+        }
+    }
+
+    public STATUS getStatus() {
+        return actualStatus;
     }
 
     public enum STATUS {

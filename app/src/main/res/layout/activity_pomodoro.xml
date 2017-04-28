@@ -5,15 +5,28 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+
     <com.mikhaellopez.circularfillableloaders.CircularFillableLoaders
         android:id="@+id/fillProgress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/filler_progress_margin"
+        android:layout_marginRight="@dimen/filler_progress_margin"
         android:src="@drawable/tomato"
         app:cfl_border="true"
         app:cfl_border_width="5dp"
         app:cfl_wave_color="#E57373" />
+
+
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_settings_white_24dp" />
 
     <ImageView
         android:id="@+id/control_button"

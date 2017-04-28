@@ -93,8 +93,8 @@ public class Timer {
                 remaining = 0;
                 if (listener == null)
                     return;
-                listener.onFinishCountdown();
                 state = STATE.FINISHED;
+                listener.onFinishCountdown();
             }
         };
     }

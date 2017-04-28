@@ -1,5 +1,7 @@
 package me.apexjcl.todomoro.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,7 +25,9 @@ import me.apexjcl.todomoro.TodomoroApplication;
 import me.apexjcl.todomoro.activities.MainActivity;
 import me.apexjcl.todomoro.realm.UserManager;
 
-import static android.view.View.*;
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 /**
  * Login fragment class duhh
@@ -122,6 +127,11 @@ public class LoginFragment extends Fragment implements SyncUser.Callback {
     @Override
     public void onSuccess(SyncUser user) {
         UserManager.setActiveUser(user);
+        // Save username
+        SharedPreferences prefs = getContext().getSharedPreferences(TodomoroApplication.SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString(TodomoroApplication.PREFS_USERNAME, getUsername());
+        edit.apply();
         ((MainActivity) getActivity()).launchApp();
     }
 

@@ -3,12 +3,14 @@ package me.apexjcl.todomoro.fragments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.labo.kaji.fragmentanimations.MoveAnimation;
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
+
+import org.xdty.preference.colorpicker.ColorPickerDialog;
+import org.xdty.preference.colorpicker.ColorPickerSwatch;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,9 +47,10 @@ import me.apexjcl.todomoro.realm.models.Task;
  * Created by apex on 24/04/2017.
  */
 
-public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
-        DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener,
-        FloatingActionButton.OnClickListener, Realm.Transaction.OnSuccess, Realm.Transaction.OnError {
+public class CreateTaskFragment extends Fragment implements DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener, FloatingActionButton.OnClickListener,
+        Realm.Transaction.OnSuccess, Realm.Transaction.OnError,
+        ColorPickerSwatch.OnColorSelectedListener {
 
     public static final String TAG = "createTask";
 
@@ -63,11 +67,12 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
     @BindView(R.id.color_picker)
     ImageView mColorDot;
 
+    private ColorPickerDialog mColorPicker;
     private DatePickerDialogFragment mDatePicker;
     private TimePickerDialogFragment mTimePicker;
     private DateFormat mFormatter;
-    private ColorPicker mColorPicker;
     private int color;
+    private int mSelectedColor;
 
     @Nullable
     @Override
@@ -79,10 +84,14 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
     }
 
     private void init() {
+        int[] mColors = getActivity().getResources().getIntArray(R.array.default_rainbow);
+        mSelectedColor = ContextCompat.getColor(getContext(), R.color.flamingo);
+        color = mSelectedColor;
         mDatePicker = new DatePickerDialogFragment();
         mTimePicker = new TimePickerDialogFragment();
-        mColorPicker = new ColorPicker(getActivity());
-        mColorPicker.setCallback(this);
+        mColorPicker = ColorPickerDialog.newInstance(R.string.color_picker_default_title,
+                mColors, mSelectedColor, 5, ColorPickerDialog.SIZE_SMALL, true);
+        mColorPicker.setOnColorSelectedListener(this);
         mFormatter = SimpleDateFormat.getDateInstance();
         mDatePicker.setListener(this);
         mTimePicker.setListener(this);
@@ -90,7 +99,7 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
         mColorDot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mColorPicker.show();
+                mColorPicker.show(getActivity().getFragmentManager(), "picker");
             }
         });
         // Update labels
@@ -106,13 +115,6 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
         }
         mFab.hide();
         return MoveAnimation.create(MoveAnimation.DOWN, enter, 250);
-    }
-
-    @Override
-    public void onColorChosen(@ColorInt int color) {
-        this.color = color;
-        updateColorView();
-        mColorPicker.dismiss();
     }
 
     @Override
@@ -175,7 +177,10 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
     }
 
     private void updateColorView() {
-        mColorDot.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mColorDot.getDrawable().setTint(color);
+        else
+            mColorDot.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
     private void updateDateLabel() {
@@ -194,5 +199,12 @@ public class CreateTaskFragment extends Fragment implements ColorPickerCallback,
     @OnClick(R.id.timeLabel)
     void showTimePicker() {
         mTimePicker.show(getFragmentManager(), "timePicker");
+    }
+
+    @Override
+    public void onColorSelected(int color) {
+        this.color = color;
+        updateColorView();
+        mColorPicker.dismiss();
     }
 }

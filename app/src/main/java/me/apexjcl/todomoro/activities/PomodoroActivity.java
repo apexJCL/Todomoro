@@ -1,11 +1,17 @@
 package me.apexjcl.todomoro.activities;
 
+import android.content.Context;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 
@@ -37,6 +43,9 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
     private String mTaskId;
     private Task mTask;
 
+    private Vibrator mVibrator;
+    private Ringtone mRingtone;
+
     private boolean autoCycle = true;
     private boolean started = false;
 
@@ -54,7 +63,10 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
     }
 
     private void init() {
+        mVibrator = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        mRingtone = RingtoneManager.getRingtone(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         mTask = (Task) TaskHandler.getTask(mTaskId);
+        getSupportActionBar().setTitle(mTask.getTitle());
         mPomodoro = new Pomodoro(mTask);
         mTimer = new Timer.Builder()
                 .setDuration(mPomodoro.getCycleTime())
@@ -65,7 +77,6 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
         updateTimeLabel(mPomodoro.getRemainingTime());
         mLoader.setProgress((int) mPomodoro.getCompletion());
         mLoader.setAmplitudeRatio(0.001f);
-        // mProgressRing.setProgress(mPomodoro.getCompletion());
     }
 
 
@@ -94,6 +105,11 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
                 setPlayButton();
                 break;
         }
+    }
+
+    @OnClick(R.id.settingsButton)
+    void settings(){
+        Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -136,7 +152,6 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
     @Override
     public void onTick(long milisUntilFinished) {
         mLoader.setProgress(calculatePercentage(mPomodoro.getCycleTime(), milisUntilFinished));
-        // mProgressRing.setProgress(mPomodoro.getCompletion());
         updateTimeLabel(milisUntilFinished);
     }
 
@@ -146,11 +161,37 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
 
     @Override
     public void onFinishCountdown() {
-        // mProgressRing.setProgress(1);
         mPomodoro.finishCycle();
-        mTimer.setRemaining(mPomodoro.getCycleTime());
-        setPlayButton();
+
+        mLoader.setColor(getProgressColor());
         mLoader.setProgress(100);
         mLoader.setAmplitudeRatio(0.001f);
+
+        mTimer.setRemaining(mPomodoro.getCycleTime());
+        updateTimeLabel(mTimer.getRemaining());
+
+        mVibrator.vibrate(mPomodoro.getVibrationPattern(), -1);
+        mRingtone.play();
+        setPlayButton();
+    }
+
+    public int getProgressColor() {
+        int color_id;
+        switch (mPomodoro.getStatus()) {
+            case BREAK:
+                color_id = R.color.breakColor;
+                break;
+            case LONG_BREAK:
+                color_id = R.color.longBreakColor;
+                break;
+            default:
+            case CYCLE:
+                color_id = R.color.cycleColor;
+                break;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return getColor(color_id);
+        }
+        return getApplicationContext().getResources().getColor(color_id);
     }
 }

@@ -3,6 +3,7 @@ package me.apexjcl.todomoro.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -107,7 +108,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         private void updateView(Task task) {
             this.mTaskId = task.getId();
             this.title.setText(task.getTitle());
-            mColorDot.getDrawable().setColorFilter(task.getColor(), PorterDuff.Mode.SRC_ATOP);
+            mColorDot.getDrawable().mutate().setColorFilter(task.getColor(), PorterDuff.Mode.SRC_ATOP);
         }
 
         @Override

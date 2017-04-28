@@ -28,7 +28,7 @@
 
     <style name="Theme.Design.Light.BottomSheetDialog.Todomoro.Pomodoro" parent="android:Theme.DeviceDefault.Dialog.NoActionBar" />
 
-    <style name="AppTheme.Pomodoro.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Pomodoro.NoActionBar" parent="Theme.AppCompat">
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 

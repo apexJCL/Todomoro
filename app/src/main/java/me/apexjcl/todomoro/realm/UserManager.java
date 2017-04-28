@@ -13,6 +13,8 @@ import me.apexjcl.todomoro.fragments.LoginFragment;
  */
 public class UserManager {
 
+    private static String username;
+
     public static boolean isSessionAvailable() {
         SyncUser user = SyncUser.currentUser();
         return user != null && user.isValid();
@@ -29,5 +31,9 @@ public class UserManager {
 
     public static void logoutCurrentUser() {
         SyncUser.currentUser().logout();
+    }
+
+    public static String getUsername() {
+        return username;
     }
 }
