@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.labo.kaji.fragmentanimations.MoveAnimation;
 
 import org.xdty.preference.colorpicker.ColorPickerDialog;
+import org.xdty.preference.colorpicker.ColorPickerSwatch;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,10 +49,12 @@ import me.apexjcl.todomoro.realm.models.Task;
 
 public class EditTaskFragment extends Fragment implements FloatingActionButton.OnClickListener,
         Realm.Transaction.OnSuccess, Realm.Transaction.OnError, DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener {
+        TimePickerDialog.OnTimeSetListener, ColorPickerSwatch.OnColorSelectedListener {
 
     public static final String TAG = "editTask";
     public static final String TASK_ID = "taskId";
+
+    private int color;
 
     private Task mTask;
     private ColorPickerDialog mColorPicker;
@@ -92,6 +96,11 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
         mFormatter = SimpleDateFormat.getDateInstance();
         mDatePicker.setListener(this);
         mTimePicker.setListener(this);
+        int[] mColors = getActivity().getResources().getIntArray(R.array.default_rainbow);
+        color = ContextCompat.getColor(getContext(), R.color.flamingo);
+        mColorPicker = ColorPickerDialog.newInstance(R.string.color_picker_default_title,
+                mColors, color, 5, ColorPickerDialog.SIZE_SMALL, true);
+        mColorPicker.setOnColorSelectedListener(this);
         mTask = TaskHandler.getTaskAsync(task_id);
         mTask.addChangeListener(new RealmObjectChangeListener<Task>() {
             @Override
@@ -109,6 +118,12 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
         View v = inflater.inflate(R.layout.fragment_edit_task, container, false);
         ButterKnife.bind(this, v);
         mFab.setOnClickListener(this);
+        mColorDot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mColorPicker.show(getActivity().getFragmentManager(), "picker");
+            }
+        });
         return v;
     }
 
@@ -120,6 +135,7 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
 
     private void init() {
         mTaskTitle.getEditText().setText(mTask.getTitle());
+        color = mTask.getColor();
         mDescription.setText(mTask.getDescription());
         mColorDot.getDrawable().mutate().setColorFilter(mTask.getColor(), PorterDuff.Mode.SRC_IN);
         mDatePicker.setDate(mTask.getDue());
@@ -147,7 +163,7 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
         t.title = mTaskTitle.getEditText().getText().toString();
         t.description = mDescription.getText().toString();
         t.due = getDueDate();
-        t.color = mTask.color;
+        t.color = color;
         t.pomodoroCycles = mTask.pomodoroCycles;
         t.finished = mTask.finished;
         t.finishedAt = mTask.finishedAt;
@@ -223,5 +239,16 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
                 mTimePicker.getMinutes()
         );
         return c.getTime();
+    }
+
+    @Override
+    public void onColorSelected(int color) {
+        this.color = color;
+        updateColorView();
+        mColorPicker.dismiss();
+    }
+
+    private void updateColorView() {
+        mColorDot.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 }
