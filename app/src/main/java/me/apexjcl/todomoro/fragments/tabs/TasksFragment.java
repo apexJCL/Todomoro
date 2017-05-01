@@ -55,7 +55,7 @@ public class TasksFragment extends Fragment implements FloatingActionButton.OnCl
         mFab.setOnClickListener(this);
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         OrderedRealmCollection<Task> tasks = TaskHandler.getUnfinishedTasks(realm);
-        TasksRecyclerAdapter adapter = new TasksRecyclerAdapter(getContext(), tasks, true, getFragmentManager(), false);
+        TasksRecyclerAdapter adapter = new TasksRecyclerAdapter(getContext(), tasks, true, getFragmentManager(), false, getActivity());
         mTaskRecyclerView.setAdapter(adapter);
         mTaskRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

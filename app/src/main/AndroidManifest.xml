@@ -26,6 +26,10 @@
             android:name=".activities.PomodoroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.Pomodoro.NoActionBar" />
+        <activity
+            android:name=".activities.TaskDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
     </application>
 
 </manifest>

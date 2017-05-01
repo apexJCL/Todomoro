@@ -64,7 +64,7 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
     private void init() {
         mVibrator = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         mRingtone = RingtoneManager.getRingtone(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        mTask = (Task) TaskHandler.getTask(mTaskId);
+        mTask = TaskHandler.getTask(mTaskId);
         getSupportActionBar().setTitle(mTask.getTitle());
         mPomodoro = new Pomodoro(mTask);
         mTimer = new Timer.Builder()

@@ -1,12 +1,12 @@
 package me.apexjcl.todomoro.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -24,8 +24,9 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmRecyclerViewAdapter;
 import me.apexjcl.todomoro.R;
+import me.apexjcl.todomoro.activities.HomeActivity;
 import me.apexjcl.todomoro.activities.PomodoroActivity;
-import me.apexjcl.todomoro.fragments.dialogs.TaskDetailDialogFragment;
+import me.apexjcl.todomoro.activities.TaskDetailActivity;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
 
@@ -36,6 +37,7 @@ import me.apexjcl.todomoro.realm.models.Task;
 public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRecyclerAdapter.ViewHolder>
         implements RealmChangeListener<Realm> {
 
+    private final Activity parentActivity;
     private FragmentManager fragmentManager;
     private boolean done = false;
 
@@ -50,10 +52,12 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
      */
     public TasksRecyclerAdapter(@NonNull Context context,
                                 @Nullable OrderedRealmCollection<Task> data,
-                                boolean autoUpdate, FragmentManager fragmentManager, boolean done) {
+                                boolean autoUpdate, FragmentManager fragmentManager, boolean done,
+                                Activity parentActivity) {
         super(context, data, autoUpdate);
         this.fragmentManager = fragmentManager;
         this.done = done;
+        this.parentActivity = parentActivity;
     }
 
     @Override
@@ -79,13 +83,13 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
             PopupMenu.OnMenuItemClickListener, View.OnLongClickListener {
 
         @BindView(R.id.title)
-        TextView title;
+        TextView mTitle;
         @BindView(R.id.menuButton)
         ImageView mMenu;
         @BindView(R.id.colorDot)
         ImageView mColorDot;
 
-        private String mTaskId;
+        private Task mTask;
         private PopupMenu mPopup;
 
         private final int DELETE_ITEM = 4;
@@ -106,8 +110,8 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         }
 
         private void updateView(Task task) {
-            this.mTaskId = task.getId();
-            this.title.setText(task.getTitle());
+            this.mTask = task;
+            this.mTitle.setText(task.getTitle());
             mColorDot.getDrawable().mutate().setColorFilter(task.getColor(), PorterDuff.Mode.SRC_ATOP);
         }
 
@@ -120,19 +124,22 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.action_edit:
+                    showEdit();
+                    return true;
                 case R.id.action_details:
                     showDetails();
                     return true;
                 case R.id.action_done:
-                    TaskHandler.markFinished(mTaskId);
+                    TaskHandler.markFinished(mTask.getId());
                     return true;
                 case R.id.action_pomodoro:
                     Intent i = new Intent(context, PomodoroActivity.class);
-                    i.putExtra(PomodoroActivity.TASK_ID, mTaskId);
+                    i.putExtra(PomodoroActivity.TASK_ID, mTask.getId());
                     context.startActivity(i);
                     return true;
                 case R.id.action_delete:
-                    TaskHandler.delete(mTaskId);
+                    TaskHandler.delete(mTask.getId());
                     return true;
                 default:
                     return true;
@@ -140,11 +147,16 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         }
 
         void showDetails() {
-            TaskDetailDialogFragment dialogFragment = new TaskDetailDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(TaskDetailDialogFragment.BUNDLE_TASK_ID, mTaskId);
-            dialogFragment.setArguments(bundle);
-            dialogFragment.show(fragmentManager, "task");
+            Intent i = new Intent(context, TaskDetailActivity.class);
+            i.putExtra(TaskDetailActivity.TASK_ID_EXTRA, mTask.getId());
+            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    parentActivity, mTitle, "tastkTitle"
+            );
+            context.startActivity(i, optionsCompat.toBundle());
+        }
+
+        void showEdit(){
+            ((HomeActivity)parentActivity).showTaskDetail(mTask.getId());
         }
 
         @Override

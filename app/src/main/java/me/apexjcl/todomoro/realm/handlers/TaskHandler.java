@@ -63,22 +63,45 @@ public class TaskHandler {
         realm.close();
     }
 
-    public static void markFinished(final String mTaskId) {
+    public static void markFinished(final String taskId) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Task task = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
-                task.finished = true;
-                realm.copyToRealmOrUpdate(task);
+                Task t = realm.where(Task.class).equalTo(Task.PK, taskId).findFirst();
+                t.finished = true;
+                realm.copyToRealmOrUpdate(t);
             }
         });
+        realm.close();
     }
 
-    public static RealmObject getTask(String mTaskId) {
+    public static Task getTask(String mTaskId) {
         Realm realm = Realm.getDefaultInstance();
-        RealmObject task = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
+        Task task = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
         realm.close();
         return task;
+    }
+
+    public static Task getTask(String mTaskId, Realm realm) {
+        return realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirstAsync();
+    }
+
+    public static Task getTaskAsync(String mTaskId) {
+        Realm realm = Realm.getDefaultInstance();
+        Task t = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirstAsync();
+        realm.close();
+        return t;
+    }
+
+    public static void saveTask(final Task task, Realm.Transaction.OnSuccess success, Realm.Transaction.OnError error) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(task);
+            }
+        }, success, error);
+        realm.close();
     }
 }

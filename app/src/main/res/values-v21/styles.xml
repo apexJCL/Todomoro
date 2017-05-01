@@ -3,12 +3,16 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
+
+        <item name="android:windowContentTransitions">true</item>
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:actionBarStyle">
@@ -19,6 +23,7 @@
     </style>
 
     <style name="Theme.Design.Light.BottomSheetDialog.Todomoro" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -27,10 +32,12 @@
     </style>
 
     <style name="Theme.AppNoActionBar.Light.DarkActionBar.Todomoro" parent="android:Theme.DeviceDefault.Light.DarkActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="android:colorPrimary">@color/colorPrimary</item>
     </style>
 
     <style name="Theme.Design.Light.BottomSheetDialog.Todomoro.Pomodoro" parent="android:Theme.DeviceDefault.Dialog.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
         <item name="android:colorAccent">@color/colorAccent</item>
     </style>
 </resources>

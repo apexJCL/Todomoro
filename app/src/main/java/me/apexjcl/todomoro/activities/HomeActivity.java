@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.BundleCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,10 +19,12 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 import io.realm.SyncUser;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.TodomoroApplication;
 import me.apexjcl.todomoro.fragments.CreateTaskFragment;
+import me.apexjcl.todomoro.fragments.EditTaskFragment;
 import me.apexjcl.todomoro.fragments.tabs.TasksFragment;
 import me.apexjcl.todomoro.realm.UserManager;
 
@@ -118,5 +122,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void showTaskDetail(String id) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new EditTaskFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(EditTaskFragment.TASK_ID, id);
+        fragment.setArguments(bundle);
+        ft.replace(R.id.fragmentHolder, fragment);
+        ft.addToBackStack(EditTaskFragment.TAG);
+        ft.commit();
     }
 }
