@@ -37,7 +37,7 @@
     <dimen name="chronometer_font">45sp</dimen>
     <dimen name="countdown_height">100dp</dimen>
     <dimen name="suffix_text">20sp</dimen>
-    <dimen name="filler_progress_margin">10dp</dimen>
+    <dimen name="filler_progress_margin">30dp</dimen>
     <dimen name="task_detail_appbar">200dp</dimen>
     <dimen name="toolbar_title">24sp</dimen>
 </resources>

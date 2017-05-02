@@ -7,6 +7,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import me.apexjcl.todomoro.fragments.EditTaskFragment;
 
 /**
  * Defines a task and it's properties
@@ -111,6 +112,46 @@ public class Task extends RealmObject {
 
     public RealmList<PomodoroStatus> getPomodoroStatusList() {
         return pomodoroStatusList;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void setPomodoroCycles(int pomodoroCycles) {
+        this.pomodoroCycles = pomodoroCycles;
+    }
+
+    public void setDue(Date due) {
+        this.due = due;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setFinishedAt(Date finishedAt) {
+        this.finishedAt = finishedAt;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setPomodoroStatusList(RealmList<PomodoroStatus> pomodoroStatusList) {
+        this.pomodoroStatusList = pomodoroStatusList;
     }
 }
 

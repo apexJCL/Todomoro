@@ -27,6 +27,9 @@ public class Pomodoro {
     public static final long POMODORO_CYCLE = 1_500_000;
     public static final long BREAK_CYCLE = 300_000;
     public static final long LONG_BREAK_CYCLE = 1_200_000;
+//    public static final long POMODORO_CYCLE = 15_000;
+//    public static final long BREAK_CYCLE = 5_000;
+//    public static final long LONG_BREAK_CYCLE = 10_000;
 
     /**
      * How long will pomodoro run :3
@@ -82,9 +85,9 @@ public class Pomodoro {
      * sets the new remaining time according to events and whatsoever
      */
     public void finishCycle() {
-        elapsedPomodoros++;
         switch (actualStatus) {
             case CYCLE:
+                elapsedPomodoros++;
                 if (elapsedPomodoros < 4) { // switch to normal break
                     actualStatus = STATUS.BREAK;
                     remainingTime = BREAK_CYCLE;
@@ -150,17 +153,25 @@ public class Pomodoro {
     public long[] getVibrationPattern() {
         switch (actualStatus) {
             case BREAK:
-                return new long[]{0l, 500l, 200l, 1000l};
+                return new long[]{0l, 1000l, 200l, 100l};
             case LONG_BREAK:
                 return new long[]{0l, 500l, 200l, 1000l, 200l, 1000l};
             default:
             case CYCLE:
-                return new long[]{0l, 500l, 200l, 500l};
+                return new long[]{0l, 300l, 200l, 300l};
         }
     }
 
     public STATUS getStatus() {
         return actualStatus;
+    }
+
+    public long getCompletedCycles() {
+        return elapsedCycles;
+    }
+
+    public long getCurrentPomodoro() {
+        return elapsedPomodoros;
     }
 
     public enum STATUS {

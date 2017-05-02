@@ -40,7 +40,6 @@ import me.apexjcl.todomoro.BuildConfig;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.fragments.dialogs.DatePickerDialogFragment;
 import me.apexjcl.todomoro.fragments.dialogs.TimePickerDialogFragment;
-import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
 
 /**
@@ -56,11 +55,12 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
 
     private int color;
 
-    private Task mTask;
     private ColorPickerDialog mColorPicker;
     private DatePickerDialogFragment mDatePicker;
     private TimePickerDialogFragment mTimePicker;
     private DateFormat mFormatter;
+    private Realm realm;
+    private Task mTask;
 
     @BindView(R.id.fab)
     FloatingActionButton mFab;
@@ -91,6 +91,7 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
             getFragmentManager().popBackStack();
             return;
         }
+        realm = Realm.getDefaultInstance();
         mDatePicker = new DatePickerDialogFragment();
         mTimePicker = new TimePickerDialogFragment();
         mFormatter = SimpleDateFormat.getDateInstance();
@@ -101,7 +102,7 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
         mColorPicker = ColorPickerDialog.newInstance(R.string.color_picker_default_title,
                 mColors, color, 5, ColorPickerDialog.SIZE_SMALL, true);
         mColorPicker.setOnColorSelectedListener(this);
-        mTask = TaskHandler.getTaskAsync(task_id);
+        mTask = realm.where(Task.class).equalTo(Task.PK, task_id).findFirstAsync();
         mTask.addChangeListener(new RealmObjectChangeListener<Task>() {
             @Override
             public void onChange(Task object, ObjectChangeSet changeSet) {
@@ -130,6 +131,8 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
     @Override
     public void onDestroy() {
         super.onDestroy();
+        realm.close();
+        realm = null;
         mTask = null;
     }
 
@@ -158,18 +161,19 @@ public class EditTaskFragment extends Fragment implements FloatingActionButton.O
     public void onClick(View v) {
         if (!checkFields())
             return;
-        Task t = new Task();
-        t.id = mTask.getId();
-        t.title = mTaskTitle.getEditText().getText().toString();
-        t.description = mDescription.getText().toString();
-        t.due = getDueDate();
-        t.color = color;
-        t.pomodoroCycles = mTask.pomodoroCycles;
-        t.finished = mTask.finished;
-        t.finishedAt = mTask.finishedAt;
-        t.createdAt = mTask.getCreatedAt();
-        t.updatedAt = mTask.getUpdatedAt();
-        TaskHandler.saveTask(t, this, this);
+        mFab.hide();
+        final String task_id = mTask.getId();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                Task task = bgRealm.where(Task.class).equalTo(Task.PK, task_id).findFirst();
+                task.setTitle(mTaskTitle.getEditText().getText().toString());
+                task.setDescription(mDescription.getText().toString());
+                task.setDue(getDueDate());
+                task.setColor(color);
+                task.setUpdatedAt(new Date());
+            }
+        }, this, this);
     }
 
     private boolean checkFields() {
