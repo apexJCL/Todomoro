@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.BundleCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 import io.realm.SyncUser;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.TodomoroApplication;
@@ -114,6 +112,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_show_done:
+                launchDoneTask();
+                break;
             case R.id.action_logout:
                 logout();
                 break;
@@ -122,6 +123,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void launchDoneTask() {
+        Intent i = new Intent(getApplicationContext(), TasksDoneActivity.class);
+        startActivity(i);
     }
 
     public void showTaskDetail(String id) {

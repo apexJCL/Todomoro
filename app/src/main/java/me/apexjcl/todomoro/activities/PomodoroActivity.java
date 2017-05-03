@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +16,6 @@ import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 
 import java.util.Locale;
 
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -44,16 +41,16 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
     TextView mPomodoroCounter;
 
     public static final String TASK_ID = "task_id";
-    private Timer mTimer;
+
+    private int notif_id = 1;
+
     private Pomodoro mPomodoro;
     private String mTaskId;
+    private Timer mTimer;
     private Task mTask;
 
     private Vibrator mVibrator;
     private Ringtone mRingtone;
-
-    private boolean autoCycle = true;
-    private boolean started = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +109,7 @@ public class PomodoroActivity extends AppCompatActivity implements Timer.TimerLi
                 setPlayButton();
                 break;
         }
+        mLoader.setColor(getProgressColor());
     }
 
     @OnClick(R.id.settingsButton)

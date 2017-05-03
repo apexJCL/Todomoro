@@ -25,6 +25,10 @@
             android:name=".activities.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.TasksDoneActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            />
         <activity
             android:name=".activities.PomodoroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

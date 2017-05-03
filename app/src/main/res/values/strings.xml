@@ -28,7 +28,7 @@
     <string name="taskDescriptionHint">Description (Markdown enabled)</string>
     <string name="dueDateTitle">Due date</string>
     <string name="datePlaceholder">01, Jan, 1999</string>
-    <string name="timePlaceholder">00:00</string>
+    <string name="timePlaceholder" translatable="false">00:00</string>
     <string name="error_blank_title">Title cannot be blank</string>
     <string name="error_creating_task">There was an error saving this task, try again.</string>
     <string name="action_done">Mark as done</string>
@@ -38,14 +38,21 @@
     <string name="label_color">Color</string>
     <string name="action_delete">Delete</string>
     <string name="action_add">Add</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="action_show_done">Show done tasks</string>
     <string name="action_show_stats">Show stats</string>
     <string name="current_user">Account</string>
     <string name="action_edit">Edit</string>
-    <string name="timer_placeholder">25:00</string>
-    <string name="minute">m</string>
-    <string name="seconds">s</string>
+    <string name="timer_placeholder" translatable="false">25:00</string>
+    <string name="minute" translatable="false">m</string>
+    <string name="seconds" translatable="false">s</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="action_more">More information</string>
+    <string name="updated_correctly">Task has been updated successfully</string>
+    <string name="transaction_error">There\'s been an error, try again later.</string>
+    <string name="deleted_successfully">Task has been deleted successfully</string>
+    <string name="created_at_title">Created:</string>
+    <string name="updated_at_title">Updated:</string>
+    <string name="no_data">No data available</string>
 </resources>

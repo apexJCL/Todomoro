@@ -12,10 +12,10 @@
     <ImageView
             android:layout_marginTop="@dimen/fragment_login_logo_margin"
             android:layout_marginBottom="@dimen/fragment_login_logo_margin"
-            android:src="@drawable/ic_alarm_on_black_24dp"
+            android:src="@drawable/tomato"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
             android:contentDescription="@string/content_logo"/>
 
     <android.support.design.widget.TextInputLayout

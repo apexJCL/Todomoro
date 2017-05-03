@@ -155,8 +155,8 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
             context.startActivity(i, optionsCompat.toBundle());
         }
 
-        void showEdit(){
-            ((HomeActivity)parentActivity).showTaskDetail(mTask.getId());
+        void showEdit() {
+            ((HomeActivity) parentActivity).showTaskDetail(mTask.getId());
         }
 
         @Override

@@ -18,7 +18,7 @@ public class TaskHandler {
     }
 
     public static OrderedRealmCollection<Task> getFinishedTasks(Realm realm) {
-        return realm.where(Task.class).equalTo("finished", true).findAllAsync();
+        return realm.where(Task.class).equalTo("finished", true).findAllSortedAsync("finishedAt");
     }
 
     public static void createTask(final Task task, Realm.Transaction.OnSuccess success, Realm.Transaction.OnError error) {

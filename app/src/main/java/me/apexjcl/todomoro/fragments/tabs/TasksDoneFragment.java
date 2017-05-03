@@ -43,7 +43,7 @@ public class TasksDoneFragment extends Fragment {
 
     private void onCreateViewInit() {
         realm = Realm.getDefaultInstance();
-        OrderedRealmCollection<Task> collection = TaskHandler.getFinishedTasks(realm);
+        OrderedRealmCollection<Task> collection = TaskHandler.getUnfinishedTasks(realm);
         TasksRecyclerAdapter adapter = new TasksRecyclerAdapter(getContext(), collection, true, getFragmentManager(), true, getActivity());
         mTaskRecyclerView.setAdapter(adapter);
         mTaskRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
