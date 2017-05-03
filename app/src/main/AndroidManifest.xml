@@ -18,6 +18,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.TestServiceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -25,10 +32,10 @@
             android:name=".activities.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.TasksDoneActivity"
+        <activity
+            android:name=".activities.TasksDoneActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.PomodoroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -38,6 +45,8 @@
             android:name=".activities.TaskDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service android:name=".services.PomodoroService" />
     </application>
 
 </manifest>

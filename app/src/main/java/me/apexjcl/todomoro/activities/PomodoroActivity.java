@@ -26,7 +26,7 @@ import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
 
 
-public class PomodoroActivity extends AppCompatActivity implements Timer.TimerListener {
+public class PomodoroActivity extends TestActivity implements Timer.TimerListener {
 
 
     @BindView(R.id.control_button)
