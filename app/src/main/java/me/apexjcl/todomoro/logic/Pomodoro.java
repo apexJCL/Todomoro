@@ -1,7 +1,9 @@
 package me.apexjcl.todomoro.logic;
 
+import io.realm.Realm;
 import io.realm.Sort;
 import me.apexjcl.todomoro.realm.handlers.PomodoroListHandler;
+import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.PomodoroStatus;
 import me.apexjcl.todomoro.realm.models.Task;
 
@@ -39,22 +41,16 @@ public class Pomodoro {
     private int elapsedPomodoros = 0;
     private int elapsedCycles = 0;
 
-    private Task mTask;
+    private Realm realm;
     private STATUS actualStatus = STATUS.CYCLE;
+    private Task mTask;
 
     private boolean finished = false;
 
-    public Pomodoro(Task task) {
-        this.mTask = task;
-        if (task.getPomodoroStatusList().size() == 0)
-            return;
-        // We have a history, so load previous values
-        PomodoroStatus status = task.getPomodoroStatusList().sort("time", Sort.ASCENDING).last();
-        finished = status.isFinished();
-        remainingTime = status.getRemaining();
-        actualStatus = stringToStatus(status.getStatus());
-        elapsedCycles = status.getCycle();
-        elapsedPomodoros = status.getPomodoro_count();
+    public Pomodoro(String task_id) {
+        realm = Realm.getDefaultInstance();
+        mTask = TaskHandler.getTaskSync(task_id, realm);
+        initProperties();
     }
 
     public void start() {
@@ -75,7 +71,8 @@ public class Pomodoro {
                 getRemainingTime(),
                 mTask.getId(),
                 elapsedCycles,
-                elapsedPomodoros
+                elapsedPomodoros,
+                realm
         );
         this.finished = finished;
     }
@@ -147,6 +144,8 @@ public class Pomodoro {
 
     public void destroyed() {
         addEntry(finished);
+        mTask.removeAllChangeListeners();
+        realm.close();
         mTask = null;
     }
 
@@ -172,6 +171,22 @@ public class Pomodoro {
 
     public long getCurrentPomodoro() {
         return elapsedPomodoros;
+    }
+
+    public String getTaskTitle() {
+        return mTask.isValid() ? mTask.getTitle() : "<loading data>";
+    }
+
+    private void initProperties() {
+        if (mTask.getPomodoroStatusList().size() == 0)
+            return;
+        // We have a history, so load previous values
+        PomodoroStatus status = mTask.getPomodoroStatusList().sort("time", Sort.ASCENDING).last();
+        finished = status.isFinished();
+        remainingTime = status.getRemaining();
+        actualStatus = stringToStatus(status.getStatus());
+        elapsedCycles = status.getCycle();
+        elapsedPomodoros = status.getPomodoro_count();
     }
 
     public enum STATUS {

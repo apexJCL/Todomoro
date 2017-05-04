@@ -135,7 +135,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
                     return true;
                 case R.id.action_pomodoro:
                     Intent i = new Intent(context, PomodoroActivity.class);
-                    i.putExtra(PomodoroActivity.TASK_ID, mTask.getId());
+                    i.putExtra(PomodoroActivity.TASK_EXTRA, mTask.getId());
                     context.startActivity(i);
                     return true;
                 case R.id.action_delete:

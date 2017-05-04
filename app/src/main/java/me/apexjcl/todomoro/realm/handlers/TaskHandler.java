@@ -39,18 +39,6 @@ public class TaskHandler {
         return task;
     }
 
-    public static void deleteAll(Realm realm) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Task> all = realm.where(Task.class).findAll();
-                for (Task task : all) {
-                    task.deleteFromRealm();
-                }
-            }
-        });
-    }
-
     public static void delete(final String mTaskId) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
@@ -76,32 +64,11 @@ public class TaskHandler {
         realm.close();
     }
 
-    public static Task getTask(String mTaskId) {
-        Realm realm = Realm.getDefaultInstance();
-        Task task = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
-        realm.close();
-        return task;
-    }
-
     public static Task getTask(String mTaskId, Realm realm) {
         return realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirstAsync();
     }
 
-    public static Task getTaskAsync(String mTaskId) {
-        Realm realm = Realm.getDefaultInstance();
-        Task t = realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirstAsync();
-        realm.close();
-        return t;
-    }
-
-    public static void saveTask(final Task task, Realm.Transaction.OnSuccess success, Realm.Transaction.OnError error) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(task);
-            }
-        }, success, error);
-        realm.close();
+    public static Task getTaskSync(String mTaskId, Realm realm) {
+        return realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
     }
 }

@@ -146,7 +146,7 @@ public class TaskDetailActivity extends AppCompatActivity implements FloatingAct
     @Override
     public void onClick(View v) {
         Intent i = new Intent(getApplicationContext(), PomodoroActivity.class);
-        i.putExtra(PomodoroActivity.TASK_ID, mTask.getId());
+        i.putExtra(PomodoroActivity.TASK_EXTRA, mTask.getId());
         startActivity(i);
     }
 

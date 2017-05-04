@@ -43,6 +43,8 @@ public class Timer {
     }
 
     public void pause() {
+        if (state == STATE.INIT)
+            return;
         mTimer.cancel();
         state = STATE.PAUSED;
     }
@@ -74,6 +76,15 @@ public class Timer {
      */
     public STATE getState() {
         return state;
+    }
+
+    /**
+     * EXPERIMENTAL :v
+     *
+     * @param listener
+     */
+    public void setListener(TimerListener listener) {
+        this.listener = listener;
     }
 
     private CountDownTimer buildTimer() {
@@ -115,6 +126,10 @@ public class Timer {
         if (mTimer == null)
             return;
         this.mTimer.cancel();
+        this.listener = null;
+    }
+
+    public void removeListener() {
         this.listener = null;
     }
 

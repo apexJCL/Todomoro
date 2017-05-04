@@ -50,4 +50,9 @@
     <string name="transaction_error">Hubo un error, intente nuevamente</string>
     <string name="updated_at_title">Actualizado:</string>
     <string name="updated_correctly">La tarea ha sido actualizada exitósamente</string>
+    <string name="notification_placeholder">Tarea</string>
+    <string name="state_break">Descanso</string>
+    <string name="state_cycle">Cíclo de trabajo</string>
+    <string name="state_long_break">Descanso largo</string>
+    <string name="state_unknown">Desconocido</string>
 </resources>

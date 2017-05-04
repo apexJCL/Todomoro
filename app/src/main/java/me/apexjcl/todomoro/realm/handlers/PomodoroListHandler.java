@@ -23,15 +23,11 @@ public class PomodoroListHandler {
      * @param task_id        Task identifier
      * @param cycle          Amount of cycles
      * @param pomodoro_count Amount of pomodoros completed
+     * @param realm
      */
-    public static void addEntry(
-            final String status,
-            final boolean finished,
-            final long remaining,
-            final String task_id,
-            final int cycle,
-            final int pomodoro_count) {
-        Realm realm = Realm.getDefaultInstance();
+    public static void addEntry(final String status, final boolean finished, final long remaining,
+                                final String task_id, final int cycle, final int pomodoro_count,
+                                Realm realm) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -45,7 +41,6 @@ public class PomodoroListHandler {
                 t.getPomodoroStatusList().add(s);
             }
         });
-        realm.close();
     }
 
 }

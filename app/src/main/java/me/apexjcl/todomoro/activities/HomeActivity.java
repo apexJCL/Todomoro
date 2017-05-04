@@ -1,8 +1,12 @@
 package me.apexjcl.todomoro.activities;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -25,12 +29,13 @@ import me.apexjcl.todomoro.fragments.CreateTaskFragment;
 import me.apexjcl.todomoro.fragments.EditTaskFragment;
 import me.apexjcl.todomoro.fragments.tabs.TasksFragment;
 import me.apexjcl.todomoro.realm.UserManager;
+import me.apexjcl.todomoro.services.PomodoroService;
 
 /**
  * Principal application activity
  * Created by apex on 22/04/17.
  */
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ServiceConnection {
 
     private boolean logoutAfterClose = false;
 
@@ -44,11 +49,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     TextView mUsername;
 
     private String username;
+    private Intent mServiceIntent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        checkForRunningPomodoro();
         // Check if a session already exists
         if (savedInstanceState == null) {
             if (UserManager.isSessionAvailable()) {
@@ -59,6 +66,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         ButterKnife.bind(this);
         init();
+    }
+
+    private void checkForRunningPomodoro() {
+        mServiceIntent = new Intent(this, PomodoroService.class);
+        bindService(mServiceIntent, this, Context.BIND_AUTO_CREATE);
     }
 
     private void init() {
@@ -139,5 +151,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ft.replace(R.id.fragmentHolder, fragment);
         ft.addToBackStack(EditTaskFragment.TAG);
         ft.commit();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        PomodoroService mService = ((PomodoroService.PomodoroBinder) service).getService();
+        if (mService.isRunning()) {
+            Intent i = new Intent(this, PomodoroActivity.class);
+            i.putExtra(PomodoroActivity.TASK_EXTRA, mService.getTaskId());
+            startActivity(i);
+        } else unbindService(this);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
     }
 }

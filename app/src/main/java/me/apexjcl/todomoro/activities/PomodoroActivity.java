@@ -1,122 +1,141 @@
 package me.apexjcl.todomoro.activities;
 
+import android.content.ComponentName;
 import android.content.Context;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.apexjcl.todomoro.R;
-import me.apexjcl.todomoro.logic.Pomodoro;
 import me.apexjcl.todomoro.logic.Timer;
-import me.apexjcl.todomoro.realm.handlers.TaskHandler;
-import me.apexjcl.todomoro.realm.models.Task;
+import me.apexjcl.todomoro.services.PomodoroService;
 
+/**
+ * Activity that will handle the pomodoro stuff :3
+ */
+public class PomodoroActivity extends TestActivity implements ServiceConnection, View.OnClickListener,
+        Timer.TimerListener {
 
-public class PomodoroActivity extends TestActivity implements Timer.TimerListener {
+    public static final String TASK_EXTRA = "task_id";
 
+    public static final int NOTIFICATION_ID = 1337; // h4x0r
 
-    @BindView(R.id.control_button)
-    ImageView mControlButton;
-    @BindView(R.id.fillProgress)
-    CircularFillableLoaders mLoader;
-    @BindView(R.id.timer_text)
-    TextView mTimerText;
-    @BindView(R.id.cycleCounter)
-    TextView mCycleCounter;
-    @BindView(R.id.pomodoroCounter)
-    TextView mPomodoroCounter;
+    private CircularFillableLoaders mLoader;
+    private TextView mPomodoroCounter;
+    private ImageView mControlButton;
+    private TextView mCycleCounter;
+    private TextView mTimerText;
 
-    public static final String TASK_ID = "task_id";
-
-    private int notif_id = 1;
-
-    private Pomodoro mPomodoro;
+    private PomodoroService mService;
+    private boolean mBound = false;
     private String mTaskId;
-    private Timer mTimer;
-    private Task mTask;
 
-    private Vibrator mVibrator;
-    private Ringtone mRingtone;
+    ////////////// Activity Status and Config Functionality /////////////////
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pomodoro);
-        mTaskId = getIntent().getStringExtra(TASK_ID);
+        mTaskId = getIntent().getStringExtra(TASK_EXTRA);
         if (mTaskId == null) {
             finish();
             return;
         }
-        ButterKnife.bind(this);
         init();
     }
 
-    private void init() {
-        mVibrator = (Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-        mRingtone = RingtoneManager.getRingtone(getApplicationContext(), RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        mTask = TaskHandler.getTask(mTaskId);
-        getSupportActionBar().setTitle(mTask.getTitle());
-        mPomodoro = new Pomodoro(mTask);
-        mTimer = new Timer.Builder()
-                .setDuration(mPomodoro.getCycleTime())
-                .setRemaining(mPomodoro.getRemainingTime())
-                .setListener(this)
-                .setCountUpdate(250)
-                .build();
-        updateTimeLabel(mPomodoro.getRemainingTime());
-        mLoader.setProgress((int) mPomodoro.getCompletion());
-        mLoader.setAmplitudeRatio(0.001f);
-        mCycleCounter.setText(String.valueOf(mPomodoro.getCompletedCycles()));
-        mPomodoroCounter.setText(String.valueOf(mPomodoro.getCurrentPomodoro()));
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent i = new Intent(this, PomodoroService.class);
+        i.putExtra(PomodoroService.TASK_EXTRA, mTaskId);
+        bindService(i, this, Context.BIND_AUTO_CREATE);
+        startService(i);
     }
 
-    @OnClick(R.id.control_button)
-    void controlTimer() {
-        switch (mTimer.getState()) {
+    @Override
+    protected void onStop() {
+        unbindService(this);
+        super.onStop();
+    }
+
+    /*
+    ////////////// General Functionality ////////////////////////////////////
+     */
+
+    private void init() {
+        mLoader = (CircularFillableLoaders) findViewById(R.id.fillProgress);
+        mTimerText = (TextView) findViewById(R.id.timer_text);
+        mCycleCounter = (TextView) findViewById(R.id.cycleCounter);
+        mPomodoroCounter = (TextView) findViewById(R.id.pomodoroCounter);
+        mControlButton = (ImageView) findViewById(R.id.control_button);
+        mControlButton.setOnClickListener(this);
+    }
+
+    ////////////// Service Methods ///////////////////////////////////////////
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        this.mService = ((PomodoroService.PomodoroBinder) service).getService();
+        this.mService.setTimeListener(this);
+        initUI();
+        mBound = true;
+    }
+
+    private void initUI() {
+        getSupportActionBar().setTitle(mService.getTaskTitle());
+        try {
+            mLoader.setColor(mService.getProgressColor());
+        } catch (Exception e) {// La vieja confiable :v
+        }
+        updateTimeLabel(mService.getRemaining());
+        mCycleCounter.setText(mService.getCompletedCycles());
+        mPomodoroCounter.setText(mService.getCurrentPomodoro());
+        Log.d("PomodoroService", String.format("Status to update button is: %s", mService.getTimerStatus()));
+        switch (mService.getTimerStatus()) {
             case INIT:
-                mPomodoro.start();
-                setPauseButton();
-                mTimer.start();
-                mLoader.setAmplitudeRatio(0.05f);
+                setPlayButton();
                 break;
             case PAUSED:
-                mPomodoro.start();
-                setPauseButton();
-                mTimer.start();
-                mLoader.setAmplitudeRatio(0.05f);
+                setPlayButton();
                 break;
             case RUNNING:
-                mTimer.pause();
-                mPomodoro.stop(mTimer.getRemaining());
-                setPlayButton();
-                mLoader.setAmplitudeRatio(0.001f);
+                setPauseButton();
                 break;
             case FINISHED:
                 setPlayButton();
                 break;
         }
-        mLoader.setColor(getProgressColor());
     }
 
-    @OnClick(R.id.settingsButton)
-    void settings() {
-        Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onBackPressed() {
+        mService.finish();
+        super.onBackPressed();
     }
 
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mService.removeListener();
+        mBound = false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        mService.controlTimer();
+        initUI();
+    }
 
     private void setPlayButton() {
         mControlButton.setImageDrawable(
@@ -134,6 +153,24 @@ public class PomodoroActivity extends TestActivity implements Timer.TimerListene
         );
     }
 
+    @Override
+    public void onTick(long milisUntilFinished) {
+        int progress = calculatePercentage(mService.getCycleTime(), milisUntilFinished);
+        mLoader.setProgress(progress);
+        updateTimeLabel(milisUntilFinished);
+    }
+
+    @Override
+    public void onFinishCountdown() {
+        setPlayButton();
+        mLoader.setColor(mService.getProgressColor());
+        mLoader.setProgress(100);
+        mLoader.setAmplitudeRatio(0.001f);
+        updateTimeLabel(mService.getRemaining());
+        mCycleCounter.setText(mService.getCompletedCycles());
+        mPomodoroCounter.setText(mService.getCurrentPomodoro());
+    }
+
     private void updateTimeLabel(long tickUpdateInMillis) {
         long seconds = (tickUpdateInMillis / 1000) % 60;
         long minutes = (tickUpdateInMillis / (1000 * 60)) % 60;
@@ -141,65 +178,8 @@ public class PomodoroActivity extends TestActivity implements Timer.TimerListene
         mTimerText.setText(time);
     }
 
-    @Override
-    protected void onDestroy() {
-        // save status
-        mTimer.destroy();
-        mPomodoro.setRemainingTime(mTimer.getRemaining());
-        mPomodoro.destroyed();
-        mTask = null;
-        mPomodoro = null;
-        mTimer = null;
-        mLoader = null;
-        super.onDestroy();
-    }
-
-    @Override
-    public void onTick(long milisUntilFinished) {
-        mLoader.setProgress(calculatePercentage(mPomodoro.getCycleTime(), milisUntilFinished));
-        updateTimeLabel(milisUntilFinished);
-    }
-
     private int calculatePercentage(long cycleTime, long remainingTime) {
+        Log.d("Pomodoro", String.format("Time cycle: %d, remaining: %d ", cycleTime, remainingTime));
         return (int) ((1f / (cycleTime / (cycleTime - ((float) remainingTime - 1f)))) * 100);
-    }
-
-    @Override
-    public void onFinishCountdown() {
-        mPomodoro.finishCycle();
-
-        mLoader.setColor(getProgressColor());
-        mLoader.setProgress(100);
-        mLoader.setAmplitudeRatio(0.001f);
-
-        mTimer.setRemaining(mPomodoro.getCycleTime());
-        updateTimeLabel(mTimer.getRemaining());
-
-        mVibrator.vibrate(mPomodoro.getVibrationPattern(), -1);
-        mRingtone.play();
-        setPlayButton();
-        // Update labels
-        mCycleCounter.setText(String.valueOf(mPomodoro.getCompletedCycles()));
-        mPomodoroCounter.setText(String.valueOf(mPomodoro.getCurrentPomodoro()));
-    }
-
-    public int getProgressColor() {
-        int color_id;
-        switch (mPomodoro.getStatus()) {
-            case BREAK:
-                color_id = R.color.breakColor;
-                break;
-            case LONG_BREAK:
-                color_id = R.color.longBreakColor;
-                break;
-            default:
-            case CYCLE:
-                color_id = R.color.cycleColor;
-                break;
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return getColor(color_id);
-        }
-        return getApplicationContext().getResources().getColor(color_id);
     }
 }

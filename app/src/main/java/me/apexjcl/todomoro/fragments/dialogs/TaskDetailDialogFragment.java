@@ -79,7 +79,7 @@ public class TaskDetailDialogFragment extends BottomSheetDialogFragment implemen
     public void onClick(View view) {
         dismiss();
         Intent i = new Intent(getContext(), PomodoroActivity.class);
-        i.putExtra(PomodoroActivity.TASK_ID, ((Task) mTask).getId());
+        i.putExtra(PomodoroActivity.TASK_EXTRA, ((Task) mTask).getId());
         startActivity(i);
     }
 

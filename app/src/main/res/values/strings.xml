@@ -55,4 +55,9 @@
     <string name="created_at_title">Created:</string>
     <string name="updated_at_title">Updated:</string>
     <string name="no_data">No data available</string>
+    <string name="notification_placeholder">Task</string>
+    <string name="state_long_break">Long break</string>
+    <string name="state_break">Break</string>
+    <string name="state_cycle">Work cycle</string>
+    <string name="state_unknown">Unknown</string>
 </resources>

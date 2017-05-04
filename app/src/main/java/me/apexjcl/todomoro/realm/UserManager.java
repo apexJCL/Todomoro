@@ -1,13 +1,10 @@
 package me.apexjcl.todomoro.realm;
 
-import android.util.Log;
-
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.SyncConfiguration;
 import io.realm.SyncUser;
 import me.apexjcl.todomoro.TodomoroApplication;
-import me.apexjcl.todomoro.fragments.LoginFragment;
 
 /**
  * Handles Realm user configuration
@@ -27,6 +24,12 @@ public class UserManager {
                 user,
                 TodomoroApplication.ROS_REALM_URL
         ).schemaVersion(TodomoroApplication.SCHEMA_VERSION).build();
+        Realm realm = Realm.getDefaultInstance();
+        RealmConfiguration storedConfig = realm.getConfiguration();
+        if (storedConfig.getPath().equals(configuration.getPath())) { // The same fucking user
+            realm.close();
+            return;
+        }
         Realm.setDefaultConfiguration(configuration);
     }
 
