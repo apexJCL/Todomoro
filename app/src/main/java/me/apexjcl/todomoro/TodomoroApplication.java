@@ -1,6 +1,9 @@
 package me.apexjcl.todomoro;
 
 import android.app.Application;
+import android.os.Build;
+import android.util.Log;
+
 import io.realm.Realm;
 import io.realm.SyncSession;
 import io.realm.SyncUser;
@@ -21,5 +24,7 @@ public class TodomoroApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+        if (BuildConfig.DEBUG)
+            Log.d("Todomoro", "Application onCreate called");
     }
 }

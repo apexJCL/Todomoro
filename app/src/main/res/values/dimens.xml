@@ -40,4 +40,5 @@
     <dimen name="filler_progress_margin">30dp</dimen>
     <dimen name="task_detail_appbar">200dp</dimen>
     <dimen name="toolbar_title">24sp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 </resources>

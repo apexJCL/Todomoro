@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".TodomoroApplication"
@@ -32,6 +33,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.PomodoroActivity"
+            android:allowTaskReparenting="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Pomodoro.NoActionBar" />
@@ -40,7 +42,18 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".services.PomodoroService"></service>
+        <service android:name=".services.PomodoroService" />
+
+        <activity
+            android:name=".activities.StatisticsActivity"
+            android:label="@string/title_activity_statistics"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.apexjcl.todomoro.activities.HomeActivity" />
+        </activity>
+        <activity android:name=".activities.ReportActivity"></activity>
     </application>
 
 </manifest>

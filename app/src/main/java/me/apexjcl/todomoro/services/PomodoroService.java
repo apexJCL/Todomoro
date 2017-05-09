@@ -148,13 +148,16 @@ public class PomodoroService extends Service implements Timer.TimerListener {
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = getNotificationManager();
         // mId allows you to update the notification later on.
         Notification mNotification = mBuilder.build();
         mNotification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         mNotificationManager.notify(NOTIFICATION_ID, mNotification);
         return mNotification;
+    }
+
+    private NotificationManager getNotificationManager() {
+        return (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public Timer.STATE getTimerStatus() {
@@ -225,6 +228,7 @@ public class PomodoroService extends Service implements Timer.TimerListener {
         mTimer.pause();
         mPomodoro.stop(mTimer.getRemaining());
         running = false;
+        getNotificationManager().cancel(NOTIFICATION_ID);
         stopSelf();
     }
 

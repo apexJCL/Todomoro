@@ -122,6 +122,13 @@ public class PomodoroActivity extends TestActivity implements ServiceConnection,
     @Override
     public void onBackPressed() {
         mService.finish();
+        if (isTaskRoot()){ // We should launch the HomeActivity
+            Intent i = new Intent(this, HomeActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            finish();
+            return;
+        }
         super.onBackPressed();
     }
 

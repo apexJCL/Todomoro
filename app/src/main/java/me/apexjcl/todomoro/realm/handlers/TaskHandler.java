@@ -1,6 +1,7 @@
 package me.apexjcl.todomoro.realm.handlers;
 
-import io.realm.OrderedRealmCollection;
+import java.util.Date;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -17,7 +18,7 @@ public class TaskHandler {
         return realm.where(Task.class).equalTo("finished", false).findAll();
     }
 
-    public static OrderedRealmCollection<Task> getFinishedTasks(Realm realm) {
+    public static RealmResults<Task> getFinishedTasks(Realm realm) {
         return realm.where(Task.class).equalTo("finished", true).findAllSortedAsync("finishedAt");
     }
 
@@ -57,7 +58,8 @@ public class TaskHandler {
             @Override
             public void execute(Realm realm) {
                 Task t = realm.where(Task.class).equalTo(Task.PK, taskId).findFirst();
-                t.finished = true;
+                t.setFinished(true);
+                t.setFinishedAt(new Date());
                 realm.copyToRealmOrUpdate(t);
             }
         });
@@ -70,5 +72,28 @@ public class TaskHandler {
 
     public static Task getTaskSync(String mTaskId, Realm realm) {
         return realm.where(Task.class).equalTo(Task.PK, mTaskId).findFirst();
+    }
+
+    public static long countUnfinished(Realm realm) {
+        return realm.where(Task.class).equalTo("finished", false).count();
+    }
+
+    public static long countFinished(Realm realm) {
+        return realm.where(Task.class).equalTo("finished", true).count();
+    }
+
+    public static RealmResults<Task> getUnfinishedTasksAsync(Realm realm) {
+        return realm.where(Task.class).equalTo("finished", false).findAllAsync();
+    }
+
+    public static long countInProgress(Realm realm) {
+        RealmResults<Task> all = realm.where(Task.class).findAll();
+        int inProgress = 0;
+        for (Task task :
+                all) {
+            if (task.getPomodoroStatusList().size() > 0)
+                inProgress++;
+        }
+        return inProgress;
     }
 }

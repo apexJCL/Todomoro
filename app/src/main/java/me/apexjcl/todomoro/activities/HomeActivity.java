@@ -20,15 +20,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 import io.realm.SyncUser;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.TodomoroApplication;
-import me.apexjcl.todomoro.fragments.CreateTaskFragment;
-import me.apexjcl.todomoro.fragments.EditTaskFragment;
 import me.apexjcl.todomoro.fragments.tabs.TasksFragment;
 import me.apexjcl.todomoro.realm.UserManager;
+import me.apexjcl.todomoro.realm.models.Task;
 import me.apexjcl.todomoro.services.PomodoroService;
 
 /**
@@ -66,6 +69,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         ButterKnife.bind(this);
         init();
+        Realm r = Realm.getDefaultInstance();
+        r.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                RealmResults<Task> all = bgRealm.where(Task.class).findAll();
+                for (Task t :
+                        all) {
+                    if (t.isFinished() && t.getFinishedAt() == null)
+                        t.setFinishedAt(new Date());
+                }
+            }
+        });
+        r.close();
     }
 
     private void checkForRunningPomodoro() {
@@ -130,6 +146,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_logout:
                 logout();
                 break;
+            case R.id.action_show_stats:
+                launchStats();
+                break;
+            case R.id.action_settings:
+                launchSettings();
+                break;
             default:
                 break;
         }
@@ -137,8 +159,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void launchSettings() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                bgRealm.delete(Task.class);
+            }
+        });
+    }
+
     public void launchDoneTask() {
-        Intent i = new Intent(getApplicationContext(), TasksDoneActivity.class);
+        Intent i = new Intent(this, TasksDoneActivity.class);
+        startActivity(i);
+    }
+
+    public void launchStats() {
+        Intent i = new Intent(this, StatisticsActivity.class);
         startActivity(i);
     }
 
