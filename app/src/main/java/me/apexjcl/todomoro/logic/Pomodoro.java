@@ -108,7 +108,7 @@ public class Pomodoro {
         this.remainingTime = remainingTime;
     }
 
-    public STATUS stringToStatus(String status) {
+    public static STATUS stringToStatus(String status) {
         switch (status) {
             case "CYCLE":
                 return STATUS.CYCLE;

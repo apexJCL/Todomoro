@@ -26,6 +26,7 @@ import io.realm.RealmRecyclerViewAdapter;
 import me.apexjcl.todomoro.R;
 import me.apexjcl.todomoro.activities.HomeActivity;
 import me.apexjcl.todomoro.activities.PomodoroActivity;
+import me.apexjcl.todomoro.activities.ReportActivity;
 import me.apexjcl.todomoro.activities.TaskDetailActivity;
 import me.apexjcl.todomoro.realm.handlers.TaskHandler;
 import me.apexjcl.todomoro.realm.models.Task;
@@ -38,6 +39,7 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
         implements RealmChangeListener<Realm> {
 
     private final Activity parentActivity;
+    private final Context context;
     private FragmentManager fragmentManager;
     private boolean done = false;
 
@@ -54,10 +56,11 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
                                 @Nullable OrderedRealmCollection<Task> data,
                                 boolean autoUpdate, FragmentManager fragmentManager, boolean done,
                                 Activity parentActivity) {
-        super(context, data, autoUpdate);
+        super(data, autoUpdate);
         this.fragmentManager = fragmentManager;
         this.done = done;
         this.parentActivity = parentActivity;
+        this.context = context;
     }
 
     @Override
@@ -140,6 +143,11 @@ public class TasksRecyclerAdapter extends RealmRecyclerViewAdapter<Task, TasksRe
                     return true;
                 case R.id.action_delete:
                     TaskHandler.delete(mTask.getId());
+                    return true;
+                case R.id.action_pomodoro_list:
+                    Intent j = new Intent(context, ReportActivity.class);
+                    j.putExtra("task_id", mTask.getId());
+                    context.startActivity(j);
                     return true;
                 default:
                     return true;

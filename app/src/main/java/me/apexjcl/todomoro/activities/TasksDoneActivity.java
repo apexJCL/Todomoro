@@ -28,10 +28,7 @@ public class TasksDoneActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         realm = Realm.getDefaultInstance();
-        mAdapter = new TasksDoneAdapter(
-                getApplicationContext(),
-                TaskHandler.getFinishedTasks(realm)
-        );
+        mAdapter = new TasksDoneAdapter(TaskHandler.getFinishedTasks(realm));
         mRecyclerView.setAdapter(mAdapter);
     }
 

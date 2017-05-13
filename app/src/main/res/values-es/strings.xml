@@ -55,4 +55,20 @@
     <string name="state_cycle">Cíclo de trabajo</string>
     <string name="state_long_break">Descanso largo</string>
     <string name="state_unknown">Desconocido</string>
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="title_activity_statistic">Estadísticas</string>
+    <string name="title_activity_statistics">Estadísticas</string>
+    <string name="stats_time">Tiempo</string>
+    <string name="stats_general">General</string>
+    <string name="label_day_finished">Terminado:</string>
+    <string name="label_day_span">Intervalo de dias</string>
+    <string name="label_finished">Terminado</string>
+    <string name="label_in_progress">En progreso</string>
+    <string name="label_unfinished">No terminadas</string>
+    <string name="no_data_text">No hay datos</string>
+    <string name="pomodoro_stats">Estatus de pomodoro</string>
+    <string name="chart_general">Tareas</string>
+    <string name="cant_write">No hay permso par escribir en almacenamiento externo</string>
+    <string name="action_pomodoro_list">Muestra historial de pomodoro</string>
+    <string name="action_generate_report">Generar reporte</string>
 </resources>

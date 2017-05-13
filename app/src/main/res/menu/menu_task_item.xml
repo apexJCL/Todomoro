@@ -3,28 +3,27 @@
 
     <item
         android:id="@+id/action_edit"
-        android:title="@string/action_edit"
-        />
+        android:title="@string/action_edit" />
 
     <item
         android:id="@+id/action_details"
-        android:title="@string/action_details"
-        />
+        android:title="@string/action_details" />
 
     <item
         android:id="@+id/action_done"
-        android:title="@string/action_done"
-        />
+        android:title="@string/action_done" />
 
     <item
         android:id="@+id/action_pomodoro"
-        android:title="@string/action_pomodoro"
-        />
+        android:title="@string/action_pomodoro" />
 
     <item
-        android:visible="false"
         android:id="@+id/action_delete"
         android:title="@string/action_delete"
-        />
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_pomodoro_list"
+        android:title="@string/action_pomodoro_list" />
 
 </menu>
